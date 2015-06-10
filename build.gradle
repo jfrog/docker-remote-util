@@ -1,0 +1,96 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.0.1"
+    }
+}
+
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+apply plugin: 'idea'
+
+version = releaseVersion
+
+def dockerUrl = project.hasProperty("docker_url") ? docker_url : System.getenv("docker_url")
+def dockerPrivateRegistry = project.hasProperty("docker_private_registry") ? docker_private_registry : System.getenv("docker_private_registry")
+def dockerPrivateRegistryUsername = project.hasProperty("docker_private_registry_username") ? docker_private_registry_username : System.getenv("docker_private_registry_username")
+def dockerPrivateRegistryPassword = project.hasProperty("docker_private_registry_password") ? docker_private_registry_password : System.getenv("docker_private_registry_password")
+
+
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile(group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.3')
+    compile(group: 'com.google.code.gson', name: 'gson', version: '2.3.1')
+    compile(group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7')
+    compile(group: 'org.apache.commons', name: 'commons-compress', version: '1.9')
+
+    testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4')
+}
+
+test {
+    systemProperty "docker_url", dockerUrl
+    systemProperty "docker_private_registry", dockerPrivateRegistry
+    systemProperty "docker_private_registry_username", dockerPrivateRegistryUsername
+    systemProperty "docker_private_registry_password", dockerPrivateRegistryPassword
+
+    testLogging {
+        events 'started','passed','skipped','failed'
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from groovydoc.destinationDir
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.jfrog.util'
+            artifactId 'docker-remote-util'
+            version version
+
+            from components.java
+
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact groovydocJar {
+                classifier "groovydoc"
+            }
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar,
+            groovydocJar,
+            jar
+
+}
+
+artifactory {
+    publish {
+
+        defaults {
+            publications ('mavenJava')
+        }
+    }
+}
