@@ -136,7 +136,7 @@ class DockerFileBuilder {
 
     DockerFileBuilder copy(boolean onBuild = false, String src, String dest) {
         copyFileToDockerFileFolder(src)
-        return addCommandToCommandsList(buildLine(onBuild, DockerFileCommands.COPY, src.split(["\\/"]).split("/")[-1], dest))
+        return addCommandToCommandsList(buildLine(onBuild, DockerFileCommands.COPY, src.split(["\\/"])[-1], dest))
     }
 
     DockerFileBuilder volume(boolean onBuild = false, String... args) {
