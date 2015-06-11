@@ -113,13 +113,13 @@ class DockerFileBuilder {
 
     DockerFileBuilder add(boolean onBuild = false, String src, String dest) {
         copyFileToDockerFileFolder(src)
-        return addCommandToCommandsList(buildLine(onBuild, DockerFileCommands.ADD, src.replace("\\","/").split("/")[-1], dest))
+        return addCommandToCommandsList(buildLine(onBuild, DockerFileCommands.ADD, src.split(["\\/"])[-1], dest))
     }
 
     DockerFileBuilder add(boolean onBuild = false, List<String> src, String dest) {
         for (int i = 0; i < src.size(); i++) {
             copyFileToDockerFileFolder(src[i])
-            src[i] = src[i].replace("\\", "/").split("/")[-1]
+            src[i] = src[i].split(["\\/"])[-1]
         }
         def args = src + [dest]
         return addCommandToCommandsList(getCommandInListForm(onBuild, DockerFileCommands.ADD, args.toArray(new String[args.size()])))
@@ -128,7 +128,7 @@ class DockerFileBuilder {
     DockerFileBuilder copy(boolean onBuild = false, List<String> src, String dest) {
         for (int i = 0; i < src.size(); i++) {
             copyFileToDockerFileFolder(src[i])
-            src[i] = src[i].replace("\\", "/").split("/")[-1]
+            src[i] = src[i].split(["\\/"])[-1]
         }
         def args = src + [dest]
         return addCommandToCommandsList(getCommandInListForm(onBuild, DockerFileCommands.COPY, args.toArray(new String[args.size()])))
@@ -136,7 +136,7 @@ class DockerFileBuilder {
 
     DockerFileBuilder copy(boolean onBuild = false, String src, String dest) {
         copyFileToDockerFileFolder(src)
-        return addCommandToCommandsList(buildLine(onBuild, DockerFileCommands.COPY, src.replace("\\","/").split("/")[-1], dest))
+        return addCommandToCommandsList(buildLine(onBuild, DockerFileCommands.COPY, src.split(["\\/"]).split("/")[-1], dest))
     }
 
     DockerFileBuilder volume(boolean onBuild = false, String... args) {
