@@ -43,6 +43,14 @@ class DockerClient {
         images = [:]
     }
 
+    DockerImage image() {
+        return new DockerImage(this)
+    }
+
+    /**
+     * Please use image() instead and set the parameters there
+     */
+    @Deprecated
     DockerImage getImage(String image, String tag = null, String repo = null, String registry = null) {
         DockerImage dockerImage = new DockerImage(this, image, tag, repo, registry)
         return dockerImage

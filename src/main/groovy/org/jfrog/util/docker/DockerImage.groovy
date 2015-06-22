@@ -38,7 +38,7 @@ class DockerImage {
     def response
 
     DockerImage(DockerClient dockerClient) {
-        this.dockerClient = dockerClient
+        this(dockerClient, null, null, null, null)
     }
 
     DockerImage(DockerClient dockerClient, String image, String tag, String repo, DockerRegistry registry) {
@@ -171,21 +171,67 @@ class DockerImage {
         return dockerClient.get("$IMAGES_URL_PREFIX/$relativePath", contentType, query)
     }
 
+    /**
+     * Set the required registry to pull from or to push to.
+     * @param registry
+     */
+    DockerImage registry(DockerRegistry registry) {
+        this.registry =  registry
+        return this
+    }
+
+    /**
+     * Set the required registry to pull from or to push to.
+     * @param registry
+     */
+    DockerImage registry(String registry) {
+        this.registry = new DockerRegistry(registry)
+        return this
+    }
+
+    /**
+     * Please use registry("registry") instead
+     */
+    @Deprecated
     DockerImage fromRegistry(DockerRegistry dockerRegistry) {
         this.registry = dockerRegistry
         return this
     }
 
+    @Deprecated
     DockerImage fromRegistry(String registry, String username = null, String password = null, String email = null, String auth = null) {
         this.registry = new DockerRegistry(registry, username, password, email, auth)
         return this
     }
 
+    DockerImage namespace(String namespace) {
+        this.repo = namespace
+        return this
+    }
+
+    /**
+     * Please use namespace("namespace") instead
+     */
+    @Deprecated
     DockerImage fromRepo(String repo) {
         this.repo = repo
         return this
     }
 
+    DockerImage repository(String repository) {
+        this.image = repository
+        return this
+    }
+
+    DockerImage tag(String tag) {
+        this.tag = tag
+        return this
+    }
+
+    /**
+     * Please use tag("tag") instead
+     */
+    @Deprecated
     DockerImage withTag(String tag) {
         this.tag = tag
         return this

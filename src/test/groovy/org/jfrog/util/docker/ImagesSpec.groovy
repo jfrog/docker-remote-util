@@ -43,7 +43,7 @@ class ImagesSpec extends Specification {
 
     def "Create new image from public registry"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox").withTag("ubuntu-14.04")
+        DockerImage dockerImage = dockerClient.image().repository("busybox").tag("ubuntu-14.04")
 
         then:
         dockerImage.doCreate()
@@ -54,10 +54,10 @@ class ImagesSpec extends Specification {
 
     def "Create new image from private registry"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox")
-                .fromRegistry(dockerPrivateRegistry)
-                .fromRepo("templates")
-                .withTag("latest")
+        DockerImage dockerImage = dockerClient.image()
+                .registry(dockerPrivateRegistry)
+                .namespace("templates")
+                .repository("busybox")
 
         then:
         dockerImage.doCreate()
@@ -65,10 +65,10 @@ class ImagesSpec extends Specification {
 
     def "Get history of image"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox")
-                .fromRegistry(dockerPrivateRegistry)
-                .fromRepo("templates")
-                .withTag("latest")
+        DockerImage dockerImage = dockerClient.image()
+                .registry(dockerPrivateRegistry)
+                .namespace("templates")
+                .repository("busybox")
 
         then:
         dockerImage.history().size() > 0
@@ -79,12 +79,14 @@ class ImagesSpec extends Specification {
 
     def "Tag new image"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox")
-                .withTag("ubuntu-14.04")
+        DockerImage dockerImage = dockerClient.image()
+                .repository("busybox")
+                .tag("ubuntu-14.04")
 
-        DockerImage targetImage = dockerClient.getImage("busybox")
-                .fromRegistry(dockerPrivateRegistry)
-                .fromRepo("dockerclient")
+        DockerImage targetImage = dockerClient.image()
+                .registry(dockerPrivateRegistry)
+                .namespace("dockerclient")
+                .repository("busybox")
 
         then:
         dockerImage.doCreate()
@@ -96,9 +98,11 @@ class ImagesSpec extends Specification {
 
     def "Push new image to private registry"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox")
-                .fromRegistry(dockerPrivateRegistry, dockerPrivateRegistryUsername, dockerPrivateRegistryPassword)
-                .fromRepo("dockerclient")
+        DockerRegistry dockerRegistry = new DockerRegistry(dockerPrivateRegistry, dockerPrivateRegistryUsername, dockerPrivateRegistryPassword)
+        DockerImage dockerImage = dockerClient.image()
+                .registry(dockerRegistry)
+                .namespace("dockerclient")
+                .repository("busybox")
 
         then:
         dockerImage.doPush()
@@ -106,9 +110,10 @@ class ImagesSpec extends Specification {
 
     def "Search image"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox")
-                .fromRegistry(dockerPrivateRegistry)
-                .fromRepo("dockerclient")
+        DockerImage dockerImage = dockerClient.image()
+                .registry(dockerPrivateRegistry)
+                .namespace("dockerclient")
+                .repository("busybox")
 
         and:
         List searchResults = dockerImage.doSearch()
@@ -120,10 +125,10 @@ class ImagesSpec extends Specification {
 
     def "Delete image"() {
         when:
-        DockerImage dockerImage = dockerClient.getImage("busybox")
-                .fromRegistry(dockerPrivateRegistry)
-                .fromRepo("dockerclient")
-                .withTag("latest")
+        DockerImage dockerImage = dockerClient.image()
+                .registry(dockerPrivateRegistry)
+                .namespace("dockerclient")
+                .repository("busybox")
 
         then:
 
@@ -132,7 +137,10 @@ class ImagesSpec extends Specification {
 
     def "Build Docker Image"() {
         setup:
-        DockerImage dockerImage = dockerClient.getImage("artifactory-rpm").withTag("3.7.0").fromRepo("artifactory")
+        DockerImage dockerImage = dockerClient.image()
+                .namespace("artifactory")
+                .repository("artifactory-rpm")
+                .tag("3.7.0")
         DockerFileBuilder dfb = new DockerFileBuilder(new File(this.getClass().getResource("").path))
 
         when:

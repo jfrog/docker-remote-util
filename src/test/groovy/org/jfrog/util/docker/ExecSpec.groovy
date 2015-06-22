@@ -26,8 +26,7 @@ class ExecSpec extends Specification {
 
     def "Exec command in running container" () {
         when:
-        dockerImage = dockerClient.getImage("busybox")
-        dockerImage.doCreate()
+        dockerImage = dockerClient.image().repository("busybox").doCreate()
         then:
         dockerImage.inspect()
 

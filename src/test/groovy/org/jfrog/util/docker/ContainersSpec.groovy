@@ -25,7 +25,7 @@ class ContainersSpec extends Specification {
 
     def setupSpec() {
         dockerClient = new DockerClient(System.getProperty("docker_url"))
-        dockerImage = dockerClient.getImage("busybox").doCreate()
+        dockerImage = dockerClient.image().repository("busybox").doCreate()
     }
 
     def setup() {
