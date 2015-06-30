@@ -102,8 +102,8 @@ class CreateConfig {
      * @return
      */
     CreateConfig addEnvs(Map<String, String> env) {
-        env.each {
-            this.env(it, env.get(it))
+        env.each { k,v ->
+            this.env(k, v)
         }
         return this
     }
