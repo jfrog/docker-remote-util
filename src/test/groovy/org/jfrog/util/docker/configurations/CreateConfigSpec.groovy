@@ -7,7 +7,7 @@ import spock.lang.Specification
  */
 class CreateConfigSpec extends Specification {
 
-    def "Create Config Output" () {
+    def "Create Config Output"() {
         when:
         CreateConfig containerConfig = new CreateConfig().
                 attachStderr(true).
@@ -36,5 +36,24 @@ class CreateConfigSpec extends Specification {
 
         then:
         println containerConfig.toJson()
+    }
+
+    def "Add Single Host"() {
+        when:
+        CreateConfig config = new CreateConfig()
+                .addHost("www.aaa.com", "127.0.0.1")
+        then:
+        config.HostConfig.ExtraHosts == ["www.aaa.com:127.0.0.1"]
+    }
+
+    def "Add Multiple Hosts"() {
+        when:
+        CreateConfig config = new CreateConfig()
+                .addHosts(["www.aaa.com": "127.0.0.1", "www.bbb.com": "1.1.1.1"])
+        then:
+        config.HostConfig.ExtraHosts == [
+                "www.aaa.com:127.0.0.1",
+                "www.bbb.com:1.1.1.1"
+        ]
     }
 }

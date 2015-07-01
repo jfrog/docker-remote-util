@@ -322,6 +322,30 @@ class CreateConfig {
         return this
     }
 
+    /**
+     * Add multiple hosts to /etc/hosts
+     * @param hostMap Map containing hostname as key and ip as value
+     */
+    CreateConfig addHosts(Map<String, String> hostMap) {
+        hostMap.each { host, ip ->
+            this.addHost(host, ip)
+        }
+        return this
+    }
+
+    /**
+     * Add hosts to /etc/hosts
+     * @param hostname hostname to use
+     * @param ip The ip to redirect to
+     */
+    CreateConfig addHost(String hostname, String ip) {
+        if (this.HostConfig.ExtraHosts == null) {
+            this.HostConfig.ExtraHosts = []
+        }
+        this.HostConfig.ExtraHosts.add("$hostname:$ip")
+        return this
+    }
+
     CreateConfig workingDir(String workingDir) {
         this.WorkingDir = workingDir
         return this
