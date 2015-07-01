@@ -61,7 +61,7 @@ class StartConfig {
      * Add multiple hosts to /etc/hosts
      * @param hostMap Map containing hostname as key and ip as value
      */
-    CreateConfig addHosts(Map<String, String> hostMap) {
+    StartConfig addHosts(Map<String, String> hostMap) {
         hostMap.each { host, ip ->
             this.addHost(host, ip)
         }
@@ -73,7 +73,7 @@ class StartConfig {
      * @param hostname hostname to use
      * @param ip The ip to redirect to
      */
-    CreateConfig addHost(String hostname, String ip) {
+    StartConfig addHost(String hostname, String ip) {
         if (this.HostConfig.ExtraHosts == null) {
             this.HostConfig.ExtraHosts = []
         }
