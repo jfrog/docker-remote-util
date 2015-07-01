@@ -26,7 +26,8 @@ class StartConfig {
             PortBindings: [:],
             Binds       : [],
             Links       : [],
-            Privileged  : false
+            Privileged  : false,
+            ExtraHosts     : null
     ]
 
     StartConfig addLink(String containerName, String internalName) {
@@ -53,6 +54,30 @@ class StartConfig {
 
     StartConfig addBinds(String hostPath, String containerPath) {
         this.HostConfig.Binds.add(hostPath + ":" + containerPath)
+        return this
+    }
+
+    /**
+     * Add multiple hosts to /etc/hosts
+     * @param hostMap Map containing hostname as key and ip as value
+     */
+    CreateConfig addHosts(Map<String, String> hostMap) {
+        hostMap.each { host, ip ->
+            this.addHost(host, ip)
+        }
+        return this
+    }
+
+    /**
+     * Add hosts to /etc/hosts
+     * @param hostname hostname to use
+     * @param ip The ip to redirect to
+     */
+    CreateConfig addHost(String hostname, String ip) {
+        if (this.HostConfig.ExtraHosts == null) {
+            this.HostConfig.ExtraHosts = []
+        }
+        this.HostConfig.ExtraHosts.add(hostname+":"+ip)
         return this
     }
 

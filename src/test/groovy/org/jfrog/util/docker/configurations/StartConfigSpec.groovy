@@ -20,4 +20,23 @@ class StartConfigSpec extends Specification {
         then:
         println startConfig.toJson()
     }
+
+    def "Add Single Host"() {
+        when:
+        StartConfig config = new StartConfig()
+                .addHost("www.aaa.com", "127.0.0.1")
+        then:
+        config.HostConfig.ExtraHosts == ["www.aaa.com:127.0.0.1"]
+    }
+
+    def "Add Multiple Hosts"() {
+        when:
+        StartConfig config = new StartConfig()
+                .addHosts(["www.aaa.com": "127.0.0.1", "www.bbb.com": "1.1.1.1"])
+        then:
+        config.HostConfig.ExtraHosts == [
+                "www.aaa.com:127.0.0.1",
+                "www.bbb.com:1.1.1.1"
+        ]
+    }
 }
