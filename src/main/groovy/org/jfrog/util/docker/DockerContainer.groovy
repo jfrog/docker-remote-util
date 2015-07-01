@@ -232,6 +232,17 @@ class DockerContainer {
      * @param destinationFolder Folder to extract to, default is "tmp".
      * @return File and it places in project temp directory.
      */
+    File copy(String fileFromContainer, String destinationFolder = null) {
+        return downloadFile(fileFromContainer, destinationFolder)
+    }
+
+    /**
+     * Download file from the container. <br>
+     * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
+     * @param fileToExtract File to download, pass full path, or relative to last working directory.
+     * @param destinationFolder Folder to extract to, default is "tmp".
+     * @return File and it places in project temp directory.
+     */
     File downloadFile(String fileToExtract, String destinationFolder = null) {
         HttpResponseDecorator response = dockerClient.client.post(
                 path: "/containers/${id ? id : name}/copy",
