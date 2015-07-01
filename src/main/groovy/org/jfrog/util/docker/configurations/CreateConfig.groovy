@@ -29,12 +29,12 @@ class CreateConfig {
     boolean AttachStdin = false
     boolean AttachStdout = false
     List<String> Cmd = []
-    int CpuShares = 0
-    int Cpuset = 0
+    def CpuShares = null
+    def Cpuset = null
     String Domainname = null
     List<String> Entrypoint = null
-    List<String> Env = []
-    Map<String, Map> ExposedPorts = [:]
+    List<String> Env = null
+    Map<String, Map> ExposedPorts = null
     String Hostname = null
     String Image = null
     String MacAddress = null
@@ -74,8 +74,7 @@ class CreateConfig {
 
     @Deprecated
     CreateConfig env(String key, String value) {
-        this.Env.add(key + "=" + value)
-        return this
+        return this.addEnv(key, value)
     }
 
     /**
@@ -84,14 +83,18 @@ class CreateConfig {
      * @param value environment key
      */
     CreateConfig addEnv(String key, String value) {
+        if (Env == null) {
+            this.Env = []
+        }
+
         this.Env.add(key + "=" + value)
         return this
     }
 
     @Deprecated
     CreateConfig env(Map<String, String> env) {
-        env.each {
-            this.env(it, env.get(it))
+        env.each { k, v ->
+            this.addEnv(k, v)
         }
         return this
     }
@@ -103,7 +106,7 @@ class CreateConfig {
      */
     CreateConfig addEnvs(Map<String, String> env) {
         env.each { k,v ->
-            this.env(k, v)
+            this.addEnv(k, v)
         }
         return this
     }
@@ -174,12 +177,12 @@ class CreateConfig {
         return this
     }
 
-    CreateConfig cpuset(int cpuset) {
+    CreateConfig cpuset(def cpuset) {
         this.Cpuset = cpuset
         return this
     }
 
-    CreateConfig cpuShares(int cpuShares) {
+    CreateConfig cpuShares(def cpuShares) {
         this.CpuShares = cpuShares
         return this
     }
@@ -224,6 +227,9 @@ class CreateConfig {
      * @param protocol Protocol to expose.
      */
     CreateConfig addExposedPort(int port, String protocol) {
+        if (ExposedPorts == null) {
+            ExposedPorts = [:]
+        }
         this.ExposedPorts.put(port + "/" + protocol.toLowerCase(), [:])
         return this
     }
