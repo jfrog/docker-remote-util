@@ -342,7 +342,7 @@ class CreateConfig {
         if (this.HostConfig.ExtraHosts == null) {
             this.HostConfig.ExtraHosts = []
         }
-        this.HostConfig.ExtraHosts.add("$hostname:$ip")
+        this.HostConfig.ExtraHosts.add(hostname+":"+ip)
         return this
     }
 
