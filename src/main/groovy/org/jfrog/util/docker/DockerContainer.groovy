@@ -113,6 +113,7 @@ class DockerContainer {
      * @param startConfig Pass specific startConfig without setting it in this object.
      */
     DockerContainer doStart(int waitExecutionToEndInSec, def startConfig) {
+        println "Start container: ${name ? name : id} ${waitExecutionToEndInSec > 0 ? ", wait up to $waitExecutionToEndInSec seconds" : ""}"
         def response = dockerClient.post(
                 "/containers/${id ? id : name}/start",
                 null,
