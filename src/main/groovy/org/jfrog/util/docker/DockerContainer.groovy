@@ -184,7 +184,7 @@ class DockerContainer {
      * @param tty
      * @return DockerExec object which should be created using doCreate() and then started with doStart().
      */
-    DockerExec exec(String command, boolean attachStdout = true, boolean attachStdin = false, boolean attachStderr = false, boolean tty = false) {
+    DockerExec exec(def command, boolean attachStdout = true, boolean attachStdin = false, boolean attachStderr = false, boolean tty = false) {
         assertIfEmpty()
         DockerExec dockerExec = new DockerExec(this, command)
 
