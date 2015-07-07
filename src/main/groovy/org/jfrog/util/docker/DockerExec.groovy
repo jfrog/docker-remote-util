@@ -35,7 +35,7 @@ class DockerExec {
 
     DockerExec(DockerContainer dockerContainer, def commands) {
         this.dockerContainer = dockerContainer
-        this.commands = commands instanceof String ? [commands] : commands
+        this.commands = commands instanceof String ? commands.split(" ") : commands
         this.attachStdin = attachStdin
         this.attachStdout = attachStdout
         this.attachStderr = attachStderr
