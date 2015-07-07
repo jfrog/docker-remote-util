@@ -35,7 +35,7 @@ class DockerExec {
 
     DockerExec(DockerContainer dockerContainer, def commands) {
         this.dockerContainer = dockerContainer
-        this.commands = commands instanceof List ? commands : commands.split(" ")
+        this.commands = commands instanceof List ? commands : ["/bin/bash", "-c", commands]
         this.attachStdin = attachStdin
         this.attachStdout = attachStdout
         this.attachStderr = attachStderr
