@@ -209,6 +209,10 @@ class DockerImage {
         return this
     }
 
+    String getNamespace() {
+        return this.repo
+    }
+
     /**
      * Please use namespace("namespace") instead
      */
@@ -223,9 +227,17 @@ class DockerImage {
         return this
     }
 
+    String getRepository() {
+        return this.image
+    }
+
     DockerImage tag(String tag) {
         this.tag = tag
         return this
+    }
+
+    String getTag() {
+        return this.tag
     }
 
     /**
