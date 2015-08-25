@@ -148,8 +148,7 @@ class DockerContainer {
 
         def response = dockerClient.delete(
                 "/containers/${id ? id : name}",
-                query,
-                ContentType.JSON
+                query
         )
     }
 
