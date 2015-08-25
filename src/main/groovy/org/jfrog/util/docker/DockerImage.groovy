@@ -58,7 +58,12 @@ class DockerImage {
         Map<String, String> query = [fromImage: getFullImageName(false)]
         if (tag != null) query.put("tag", tag)
 
-        def response = post("create", ContentType.JSON, ContentType.TEXT, null, query)
+        def response = post("create",
+                ContentType.JSON,
+                ContentType.TEXT,
+                null,
+                query,
+                registry?.username ? registry.getXRegistryAuthHeader() : null)
 
         dockerClient.addImageToImagesMap(this)
 
