@@ -328,11 +328,12 @@ class DockerClient {
      * Build image
      * @param dfb Can be either Dockerfile or File,
      * @param dockerImage Docker image to build
+     * @param removeTempContainers Keep temp containers created during the build, default is false
      * @throws ClassCastException If dfb is not File or DockerFileBuilder ClassCastException will be thrown.
      */
-    def build(def dfb, DockerImage dockerImage) throws ClassCastException {
+    def build(def dfb, DockerImage dockerImage, boolean removeTempContainers = false) throws ClassCastException {
         if (dfb instanceof DockerFileBuilder || dfb instanceof File) {
-            build(dfb, dockerImage.getFullImageName(false), dockerImage.tag)
+            build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers)
             return dockerImage
         } else {
             throw new ClassCastException("dfb object must be File or DockerFileBuilder")
