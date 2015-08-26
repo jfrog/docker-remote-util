@@ -88,6 +88,7 @@ class StartConfig {
      */
     StartConfig publishAllPorts(boolean publish = true) {
         HostConfig.PublishAllPorts = publish
+        return this
     }
 
     /**
