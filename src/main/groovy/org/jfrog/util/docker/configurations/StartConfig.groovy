@@ -27,7 +27,8 @@ class StartConfig {
             Binds       : [],
             Links       : [],
             Privileged  : false,
-            ExtraHosts     : null
+            ExtraHosts     : null,
+            PublishAllPorts : false
     ]
 
     StartConfig addLink(String containerName, String internalName) {
@@ -79,6 +80,14 @@ class StartConfig {
         }
         this.HostConfig.ExtraHosts.add(hostname+":"+ip)
         return this
+    }
+
+    /**
+     * Publish all ports on container startup to random ports
+     * @param publish true to publish all ports
+     */
+    StartConfig publishAllPorts(boolean publish = true) {
+        HostConfig.PublishAllPorts = publish
     }
 
     /**
