@@ -226,6 +226,16 @@ class DockerContainer {
     }
 
     /**
+     * Show processes running inside container.
+     * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#list-processes-running-inside-a-container
+     * @return Map as representation of the json returned.
+     */
+    def top() {
+        assertIfEmpty()
+        return get("${id ? id : name}/top", ContentType.JSON)
+    }
+
+    /**
      * Download file from the container. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
      * @param fileToExtract File to download, pass full path, or relative to last working directory.
