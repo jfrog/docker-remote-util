@@ -260,6 +260,8 @@ class DockerClient {
                 setRequestContentType(requestContentType)
             }
 
+            true
+
             response.success = { HttpResponse resp, slurped ->
                 if (responseClass == String || responseType == ContentType.TEXT) {
                     // we overrode the parser to be just text, but oddly it returns an InputStreamReader instead of a String
@@ -269,12 +271,17 @@ class DockerClient {
                 }
             }
 
-            response.'404' = { resp ->
-                throw new HttpResponseException(resp)
-            }
+            def statusCodes = ['400', '401', '402', '403', '404', '405', '409', '500', '501', '502',]
 
-            response.'409' = { resp ->
-                throw new HttpResponseException(resp)
+            statusCodes.each {
+                response."$it" = { resp ->
+                    System.err.println "ERROR: ${resp.responseBase.getStatusLine()}"
+                    def body = resp.responseData
+                    if (body) {
+                        System.err.println "ERROR: ${body.text}"
+                    }
+
+                }
             }
         }
         ret
