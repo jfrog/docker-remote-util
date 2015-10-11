@@ -260,8 +260,6 @@ class DockerClient {
                 setRequestContentType(requestContentType)
             }
 
-            true
-
             response.success = { HttpResponse resp, slurped ->
                 if (responseClass == String || responseType == ContentType.TEXT) {
                     // we overrode the parser to be just text, but oddly it returns an InputStreamReader instead of a String
@@ -280,7 +278,7 @@ class DockerClient {
                     if (body) {
                         System.err.println "ERROR: ${body.text}"
                     }
-
+                    throw new HttpResponseException(resp)
                 }
             }
         }
