@@ -217,6 +217,24 @@ class DockerContainer {
     }
 
     /**
+     * Check if container is exists in docker server. <br>
+     * @return True only if exists on server, false if isn't.
+     */
+    public boolean isExists() {
+        assertIfEmpty()
+        try {
+            this.inspect()
+            return true
+        } catch (HttpResponseException hre) {
+            if ( hre.response.getStatus() == 404) {
+                return false
+            } else {
+                throw hre
+            }
+        }
+    }
+
+    /**
      * Get logs of the container.
      * @return Logs as string
      */
