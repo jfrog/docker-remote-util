@@ -65,6 +65,13 @@ class ContainersSpec extends Specification {
         dockerContainer.inspect().State.Running == true
     }
 
+    def "Check if container exists"() {
+        when:
+        def exists = dockerContainer.isExists()
+        then:
+        exists == true
+    }
+
     def "Stop container"() {
         when:
         dockerContainer.doStop()
