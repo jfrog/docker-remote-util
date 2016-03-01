@@ -30,7 +30,7 @@ class ImagesSpec extends Specification {
         def dockerImages = dockerClient.getImagesFromServer()
 
         then:
-        dockerImages.size() > 0
+        dockerImages.size() >= 0
     }
 
     def "Get list of all images"() {
@@ -38,7 +38,7 @@ class ImagesSpec extends Specification {
         def dockerImages = dockerClient.getImagesFromServer(true)
 
         then:
-        dockerImages.size() > 0
+        dockerImages.size() >= 0
     }
 
     def "Create new image from public registry"() {
