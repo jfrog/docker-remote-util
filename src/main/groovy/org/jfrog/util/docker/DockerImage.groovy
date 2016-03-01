@@ -17,6 +17,7 @@
 package org.jfrog.util.docker
 
 import groovyx.net.http.ContentType
+import groovyx.net.http.HttpResponseException
 
 /**
  * Created by matank on 4/27/15.
@@ -131,6 +132,23 @@ class DockerImage {
      */
     def inspect() {
         return get("${getFullImageName()}/json", ContentType.JSON)
+    }
+
+    /**
+     * Check if container is exists in docker server. <br>
+     * @return True only if exists on server, false if isn't.
+     */
+    public boolean isExists() {
+        try {
+            this.inspect()
+            return true
+        } catch (HttpResponseException hre) {
+            if ( hre.response.getStatus() == 404) {
+                return false
+            } else {
+                throw hre
+            }
+        }
     }
 
     def history() {

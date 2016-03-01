@@ -46,7 +46,9 @@ class ImagesSpec extends Specification {
         DockerImage dockerImage = dockerClient.image().repository("busybox").tag("ubuntu-14.04")
 
         then:
+        dockerImage.isExists() == false
         dockerImage.doCreate()
+        dockerImage.isExists() == true
 
         and:
         dockerImage.doDelete()
