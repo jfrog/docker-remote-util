@@ -103,6 +103,14 @@ class DockerClient {
         this.images.get(imageId).remove(dockerImage)
     }
 
+    /**
+     * Get Containers from server based on specific filter.
+     * @return Map of all running containers.
+     */
+    Map<String, DockerContainer> getContainersFromServer(boolean isAll, ContainerFilter filters) {
+        return getContainersFromServer(isAll, null, null, null, false, filters)
+    }
+
     Map<String, DockerContainer> getContainersFromServer(boolean isAll = false, Integer limit = null, String sinceId = null, String beforeId = null, boolean isShowSizes = false, ContainerFilter filters = null) {
         Map<String, String> query = [:]
         if (isAll) query.put("all", "1")
