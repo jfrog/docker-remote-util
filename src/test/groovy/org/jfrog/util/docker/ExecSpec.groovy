@@ -31,7 +31,7 @@ class ExecSpec extends Specification {
         dockerImage.inspect()
 
         when:
-        dockerContainer = dockerImage.getNewContainer("busybox-exec")
+        dockerContainer = dockerImage.getNewContainer("busybox-exec-keep-alive")
         dockerContainer.createConfig.addCommand(["ping", "8.8.8.8"]).hostname("busybox-exec")
         dockerContainer.doCreate()
         then:
@@ -44,10 +44,38 @@ class ExecSpec extends Specification {
         dockerExec = dockerContainer.exec("env").doCreate()
         then:
         dockerExec.doStart().contains("HOSTNAME=busybox-exec")
+
+        cleanup:
+        dockerContainer.doDelete(true, true)
+    }
+
+    def "Exec command in running container with Connection close header" () {
+        when:
+        dockerImage = dockerClient.image().repository("busybox").doCreate()
+        then:
+        dockerImage.inspect()
+
+        when:
+        dockerContainer = dockerImage.getNewContainer("busybox-exec-connection-close")
+        dockerContainer.createConfig.addCommand(["ping", "8.8.8.8"]).hostname("busybox-exec")
+        dockerContainer.doCreate()
+        then:
+        dockerContainer.inspect()
+
+        when:
+        dockerContainer.dockerClient.setConnectionClose()
+        dockerContainer.doStart()
+        dockerContainer.dockerClient.setKeepAlive()
+        dockerExec = dockerContainer.exec("env").doCreate()
+
+        then:
+        dockerExec.doStart().contains("HOSTNAME=busybox-exec")
+
+        cleanup:
+        dockerContainer.doDelete(true, true)
     }
 
     def cleanupSpec() {
-        dockerContainer.doDelete(true, true)
         dockerImage.doDelete(true)
     }
 }
