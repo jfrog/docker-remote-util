@@ -243,7 +243,7 @@ class DockerContainer {
         String logs = get("${id ? id : name}/logs", ContentType.TEXT, [stdout: 1, stderr: 1])
         //Replace all special characters related to the header of each line
         //https://docs.docker.com/engine/reference/api/docker_remote_api_v1.19/#attach-to-a-container
-        logs = logs.replaceAll("[\u0000-\u000F]","")
+        logs = logs.replaceAll("[\u0000\u0001\u0002]","")
         return logs
     }
 
