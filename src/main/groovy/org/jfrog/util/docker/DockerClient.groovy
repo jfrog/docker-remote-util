@@ -31,6 +31,7 @@ class DockerClient {
     def url
     RESTClient client
     Map<String, Set<DockerImage>> images
+    boolean isKeepAlive = true
 
     private final String contextName
 
@@ -245,7 +246,9 @@ class DockerClient {
 //            allHeaders << [(HTTP.CONTENT_LEN): contentLength]
 //        }
 
-        allHeaders.put("Connection", "close")
+        if (!isKeepAlive) {
+            allHeaders.put("Connection", "close")
+        }
 
         // responseType will be used as the type to parse (XML, JSON, or Reader), it'll also create a header for Accept
         // Artifactory typically only returns one type, so let's ANY align those two. The caller can then do the appropriate thing.
@@ -353,5 +356,13 @@ class DockerClient {
         } else {
             throw new ClassCastException("dfb object must be File or DockerFileBuilder")
         }
+    }
+
+    boolean setKeepAlive() {
+        this.isKeepAlive = true
+    }
+
+    boolean setConnectionClose() {
+        this.isKeepAlive = false
     }
 }
