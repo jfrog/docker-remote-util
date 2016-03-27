@@ -23,12 +23,13 @@ import com.google.gson.Gson
  */
 class StartConfig {
     Map<String, Object> HostConfig = [
-            PortBindings: [:],
-            Binds       : [],
-            Links       : [],
-            Privileged  : false,
+            PortBindings   : [:],
+            Binds          : [],
+            Links          : [],
+            Privileged     : false,
             ExtraHosts     : null,
-            PublishAllPorts : false
+            PublishAllPorts: false,
+            VolumesFrom    : []
     ]
 
     StartConfig addLink(String containerName, String internalName) {
@@ -58,6 +59,11 @@ class StartConfig {
         return this
     }
 
+    StartConfig addVolumeFrom(String sourceContainerName) {
+        this.HostConfig.VolumesFrom.add(sourceContainerName)
+        return this
+    }
+
     /**
      * Add multiple hosts to /etc/hosts
      * @param hostMap Map containing hostname as key and ip as value
@@ -78,7 +84,7 @@ class StartConfig {
         if (this.HostConfig.ExtraHosts == null) {
             this.HostConfig.ExtraHosts = []
         }
-        this.HostConfig.ExtraHosts.add(hostname+":"+ip)
+        this.HostConfig.ExtraHosts.add(hostname + ":" + ip)
         return this
     }
 
