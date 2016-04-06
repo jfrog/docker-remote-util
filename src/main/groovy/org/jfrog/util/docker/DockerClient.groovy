@@ -33,6 +33,8 @@ class DockerClient {
     Map<String, Set<DockerImage>> images
     boolean isKeepAlive = true
 
+    String apiVersion
+
     private final String contextName
 
     DockerClient(url) {
@@ -41,6 +43,7 @@ class DockerClient {
         }
         this.url = url
         client = new RESTClient(this.url)
+        apiVersion = version().ApiVersion
         images = [:]
     }
 
@@ -356,6 +359,10 @@ class DockerClient {
         } else {
             throw new ClassCastException("dfb object must be File or DockerFileBuilder")
         }
+    }
+
+    Map version() {
+        get("version", ContentType.JSON)
     }
 
     boolean setKeepAlive() {
