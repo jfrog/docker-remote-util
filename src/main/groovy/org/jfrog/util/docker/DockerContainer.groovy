@@ -260,6 +260,17 @@ class DockerContainer {
     }
 
     /**
+     * Show stats of running container. (Available from Docker remote-api v1.19)
+     * @param stream Allows to stream the stats, default is false for a single request
+     * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.18/#get-container-stats-based-on-resource-usage
+     * @return Map as representation of the json returned.
+     */
+    def stats(boolean stream = false) {
+        assertIfEmpty()
+        return get("${id ? id : name}/stats", ContentType.JSON, [stream:stream])
+    }
+
+    /**
      * Download file from the container. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
      * @param fileToExtract File to download, pass full path, or relative to last working directory.

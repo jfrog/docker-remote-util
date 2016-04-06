@@ -72,6 +72,15 @@ class ContainersSpec extends Specification {
         exists == true
     }
 
+    def "Get Container stats"() {
+        when:
+        Map stats = dockerContainer.stats()
+        then:
+        stats.containsKey("memory_stats")
+        stats.containsKey("network")
+        stats.containsKey("cpu_stats")
+    }
+
     def "Stop container"() {
         when:
         dockerContainer.doStop()
