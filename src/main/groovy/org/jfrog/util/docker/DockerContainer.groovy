@@ -106,14 +106,24 @@ class DockerContainer {
         return doStart(waitExecutionToEndInSec, null)
     }
 
+    DockerContainer doStart(boolean debugOutput) {
+        return doStart(0, null, debugOutput)
+    }
+
+    DockerContainer doStart(int waitExecutionToEndInSec, boolean debugOutput) {
+        return doStart(waitExecutionToEndInSec, null, debugOutput)
+    }
+
     /**
      * Start container. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#start-a-container
      * @param waitExecutionToEndInSec Seconds to wait until execution finishes, 0 don't wait at all.
      * @param startConfig Pass specific startConfig without setting it in this object.
      */
-    DockerContainer doStart(int waitExecutionToEndInSec, def startConfig) {
-        println "Start container: ${name ? name : id} ${waitExecutionToEndInSec > 0 ? ", wait up to $waitExecutionToEndInSec seconds" : ""}"
+    DockerContainer doStart(int waitExecutionToEndInSec, def startConfig, boolean debugOutput = false) {
+        if (debugOutput) {
+            println "Start container: ${name ? name : id} ${waitExecutionToEndInSec > 0 ? ", wait up to $waitExecutionToEndInSec seconds" : ""}"
+        }
         def response = dockerClient.post(
                 "/containers/${id ? id : name}/start",
                 null,
