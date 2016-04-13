@@ -282,6 +282,23 @@ class DockerContainer {
     }
 
     /**
+     * Get Map of all environment variables inside a container.
+     * @return Map of variables in a container
+     */
+    Map<String, String> getEnvs() {
+        assertIfEmpty()
+        def inspectOutput = inspect()
+        Map<String, String> maps = [:]
+
+        inspectOutput.Config.Env.each {
+            def (key, value) = it.split("=")
+            maps.put(key,value)
+        }
+
+        return maps.size() > 0 ? maps : null
+    }
+
+    /**
      * Download file from the container. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
      * @param fileToExtract File to download, pass full path, or relative to last working directory.

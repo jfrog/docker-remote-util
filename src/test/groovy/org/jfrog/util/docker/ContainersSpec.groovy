@@ -6,7 +6,6 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
-
 /**
  * Created by matank on 4/28/15.
  */
@@ -51,6 +50,7 @@ class ContainersSpec extends Specification {
         dockerContainer.createConfig
                 .hostname("test-container")
                 .addCommand(["/bin/sh", "-c", "echo test has passed > /tmp/test.txt ; ping 8.8.8.8"])
+                .addEnv("testEnv", "123")
 
         when:
         dockerContainer.doCreate()
@@ -79,6 +79,13 @@ class ContainersSpec extends Specification {
         stats.containsKey("memory_stats")
         stats.containsKey("network")
         stats.containsKey("cpu_stats")
+    }
+
+    def "Get Container variables"() {
+        when:
+        Map variables = dockerContainer.getEnvs()
+        then:
+        variables.testEnv == "123"
     }
 
     def "Stop container"() {
