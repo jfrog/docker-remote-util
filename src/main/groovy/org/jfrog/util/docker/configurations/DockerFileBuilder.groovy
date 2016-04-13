@@ -119,7 +119,7 @@ class DockerFileBuilder {
     DockerFileBuilder add(boolean onBuild = false, List<String> src, String dest) {
         for (int i = 0; i < src.size(); i++) {
             copyFileToDockerFileFolder(src[i])
-            src[i] = src[i].split(File.pathSeparator)[-1]
+            src[i] = src[i].split("[\\\\/]")[-1]
         }
         def args = src + [dest]
         return addCommandToCommandsList(getCommandInListForm(onBuild, DockerFileCommands.ADD, args.toArray(new String[args.size()])))
