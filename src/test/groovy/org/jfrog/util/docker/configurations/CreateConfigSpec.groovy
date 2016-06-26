@@ -33,7 +33,7 @@ class CreateConfigSpec extends Specification {
                 setUser("test_user").
                 addVolume("/tmp").
                 workingDir("/tmp/working_dir").
-                addLinkToNetwork("test_container")
+                addLinkToNetwork("internal_network", "test_container")
 
         then:
         println containerConfig.toJson()

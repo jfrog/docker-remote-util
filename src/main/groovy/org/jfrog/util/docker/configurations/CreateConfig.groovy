@@ -50,11 +50,7 @@ class CreateConfig {
     Map<String, Map> Volumes = [:]
     String WorkingDir = null
     Map<String, Object> NetworkingConfig = [
-            EndpointsConfig : [
-                    isolated_nw : [
-                            Links : []
-                    ]
-            ]
+            EndpointsConfig: [:]
     ]
 
     Map<String, Object> HostConfig = [
@@ -112,7 +108,7 @@ class CreateConfig {
      * @return
      */
     CreateConfig addEnvs(Map<String, String> env) {
-        env.each { k,v ->
+        env.each { k, v ->
             this.addEnv(k, v)
         }
         return this
@@ -355,7 +351,7 @@ class CreateConfig {
         if (this.HostConfig.ExtraHosts == null) {
             this.HostConfig.ExtraHosts = []
         }
-        this.HostConfig.ExtraHosts.add(hostname+":"+ip)
+        this.HostConfig.ExtraHosts.add(hostname + ":" + ip)
         return this
     }
 
@@ -364,14 +360,12 @@ class CreateConfig {
         return this
     }
 
-
     //TODO: Add test to this method
-    CreateConfig addLinkToNetwork(String containerName, String internalName = null ) {
+    CreateConfig addLinkToNetwork(String networkModeName, String containerName, String internalName = null) {
         String linkToAdd = containerName
-        if (internalName) {
-            linkToAdd = linkToAdd + ":" + internalName
-        }
-        getIsolatedNetwork().Links.add(linkToAdd)
+        if (internalName) linkToAdd = linkToAdd + ":" + internalName
+        if (!getIsolatedNetwork(networkModeName).containsKey("Links")) getIsolatedNetwork(networkModeName).put("Links", [])
+        getIsolatedNetwork(networkModeName).Links.add(linkToAdd)
         return this
     }
 
@@ -380,11 +374,14 @@ class CreateConfig {
         return gson.toJson(this)
     }
 
-    private Object getEndPointsConfig() {
+    private Map<String, Object> getEndPointsConfig() {
         NetworkingConfig.EndpointsConfig
     }
 
-    private Object getIsolatedNetwork() {
-        getEndPointsConfig().isolated_nw
+    private Map<String, Object> getIsolatedNetwork(String networkModeName) {
+        if (!getEndPointsConfig().containsKey(networkModeName)) {
+            getEndPointsConfig().put(networkModeName, [:])
+        }
+        return getEndPointsConfig()[networkModeName]
     }
 }
