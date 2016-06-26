@@ -50,9 +50,9 @@ class CreateConfig {
     Map<String, Map> Volumes = [:]
     String WorkingDir = null
     Map<String, Object> NetworkingConfig = [
-            EndpointsConfig = [
-                    isolated_nw = [
-                            Links = []
+            EndpointsConfig : [
+                    isolated_nw : [
+                            Links : []
                     ]
             ]
     ]
