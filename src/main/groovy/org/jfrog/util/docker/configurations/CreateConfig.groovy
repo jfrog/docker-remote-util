@@ -384,7 +384,7 @@ class CreateConfig {
         NetworkingConfig.EndpointsConfig
     }
 
-    private void getIsolatedNetwork() {
+    private Object getIsolatedNetwork() {
         getEndPointsConfig().isolated_nw
     }
 }
