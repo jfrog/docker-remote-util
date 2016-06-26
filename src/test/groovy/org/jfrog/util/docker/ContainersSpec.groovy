@@ -77,7 +77,7 @@ class ContainersSpec extends Specification {
         Map stats = dockerContainer.stats()
         then:
         stats.containsKey("memory_stats")
-        stats.containsKey("network")
+//        stats.containsKey("network")
         stats.containsKey("cpu_stats")
     }
 
