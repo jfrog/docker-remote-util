@@ -49,6 +49,13 @@ class CreateConfig {
     String User = null
     Map<String, Map> Volumes = [:]
     String WorkingDir = null
+    Map<String, Object> NetworkingConfig = [
+            EndpointsConfig = [
+                    isolated_nw = [
+                            Links = []
+                    ]
+            ]
+    ]
 
     Map<String, Object> HostConfig = [
             Binds          : [],
@@ -357,8 +364,27 @@ class CreateConfig {
         return this
     }
 
+
+    //TODO: Add test to this method
+    CreateConfig addLinkToNetwork(String containerName, String internalName = null ) {
+        String linkToAdd = containerName
+        if (internalName) {
+            linkToAdd = linkToAdd + ":" + internalName
+        }
+        getIsolatedNetwork().Links.add(linkToAdd)
+        return this
+    }
+
     String toJson() {
         Gson gson = new Gson()
         return gson.toJson(this)
+    }
+
+    private Object getEndPointsConfig() {
+        NetworkingConfig.EndpointsConfig
+    }
+
+    private void getIsolatedNetwork() {
+        getEndPointsConfig().isolated_nw
     }
 }
