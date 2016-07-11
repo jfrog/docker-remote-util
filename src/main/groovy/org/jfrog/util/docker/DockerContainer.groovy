@@ -124,14 +124,21 @@ class DockerContainer {
         if (debugOutput) {
             println "Start container: ${name ? name : id} ${waitExecutionToEndInSec > 0 ? ", wait up to $waitExecutionToEndInSec seconds" : ""}"
         }
-        def response = dockerClient.post(
-                "/containers/${id ? id : name}/start",
-                null,
-                ContentType.JSON,
-                null,
-                ContentType.JSON,
-                startConfig ? startConfig : this.startConfig.toJson()
-        )
+        try {
+            def response = dockerClient.post(
+                    "/containers/${id ? id : name}/start",
+                    null,
+                    ContentType.JSON,
+                    null,
+                    ContentType.JSON,
+                    startConfig ? startConfig : this.startConfig.toJson()
+            )
+        } catch (HttpResponseException hre) {
+            System.err.println( "Start container ERROR: ${hre.getMessage()}" )
+            System.err.println( "Start container ERROR: ${hre.response.data.text}" )
+            throw hre
+        }
+
 
         while (waitExecutionToEndInSec > 0) {
             if (this.inspect().State.Running == false) {
