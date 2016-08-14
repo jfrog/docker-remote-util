@@ -72,6 +72,13 @@ class ContainersSpec extends Specification {
         exists == true
     }
 
+    def "Check if container is running"() {
+        when:
+        boolean isRunning = dockerContainer.state.isRunning()
+        then:
+        isRunning == true
+    }
+
     def "Get Container stats"() {
         when:
         Map stats = dockerContainer.stats()
@@ -93,6 +100,13 @@ class ContainersSpec extends Specification {
         dockerContainer.doStop()
         then:
         dockerContainer.inspect().State.Running == false
+    }
+
+    def "Check if container is not running"() {
+        when:
+        boolean isRunning = dockerContainer.state.isRunning()
+        then:
+        isRunning == false
     }
 
     def "Collect logs"() {

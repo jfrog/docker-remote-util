@@ -21,6 +21,7 @@ import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import org.jfrog.util.docker.configurations.CreateConfig
 import org.jfrog.util.docker.configurations.StartConfig
+import org.jfrog.util.docker.inspect.State
 import org.jfrog.util.docker.utils.TarArchive
 
 /**
@@ -35,6 +36,7 @@ class DockerContainer {
 
     CreateConfig createConfig
     StartConfig startConfig
+    State state = new State()
 
     DockerContainer(DockerClient dockerClient, String image, String id = null) {
         this.dockerClient = dockerClient
@@ -135,7 +137,9 @@ class DockerContainer {
             )
         } catch (HttpResponseException hre) {
             System.err.println( "Start container ERROR: ${hre.getMessage()}" )
-            System.err.println( "Start container ERROR: ${hre.response.data.text}" )
+            if (hre.response.data != null) {
+                System.err.println( "Start container ERROR: ${hre.response.data.text}" )
+            }
             throw hre
         }
 
@@ -231,6 +235,28 @@ class DockerContainer {
     def inspect() {
         assertIfEmpty()
         return get("${id ? id : name}/json", ContentType.JSON)
+    }
+
+    /**
+     * Get State of a container, extracted from inspect.
+     * @return Map of State element.
+     */
+    State getState() {
+        assertIfEmpty()
+        state.init(inspect())
+        return state
+    }
+
+    /**
+     * Get status code of a container. <br>
+     * @return Exit code of a container, -1 if container still running.
+     */
+    int exitCode() {
+        State state = state()
+        if (state.isRunning()) {
+            return -1
+        }
+        return state.ExitCode
     }
 
     /**
