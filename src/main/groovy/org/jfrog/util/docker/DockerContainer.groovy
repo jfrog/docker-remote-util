@@ -48,7 +48,14 @@ class DockerContainer {
         this.id = id
     }
 
-    DockerContainer doCreate(boolean throwsExceptionOnConflict = true) {
+    /**
+     *
+     * @param throwsExceptionOnConflict - If true, will throw exception on conflict during creation
+     * @param forceRecreateOnConflict - If true, will remove existing container roughly, and recreate container.
+     * this flag required 'throwsExceptionOnConflict' to be false.
+     * @return
+     */
+    DockerContainer doCreate(boolean throwsExceptionOnConflict = true, boolean forceRecreateOnConflict = false) {
 
         def query = name != null ? [name: name] : null
 
@@ -75,7 +82,12 @@ class DockerContainer {
                     System.err.println errorMessage
                     throw hre
                 } else {
-                    println errorMessage
+                    if (forceRecreateOnConflict) {
+                        this.doDelete(true, true)
+                        this.doCreate(throwsExceptionOnConflict, false)
+                    } else {
+                        println errorMessage
+                    }
                 }
             } else {
                 throw hre
