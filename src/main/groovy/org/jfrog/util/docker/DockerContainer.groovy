@@ -23,6 +23,7 @@ import org.jfrog.util.docker.configurations.CreateConfig
 import org.jfrog.util.docker.configurations.StartConfig
 import org.jfrog.util.docker.inspect.State
 import org.jfrog.util.docker.utils.TarArchive
+import org.jfrog.util.docker.utils.VersionHelper
 
 /**
  * Created by matank on 12/22/2014.
@@ -50,6 +51,12 @@ class DockerContainer {
     DockerContainer doCreate(boolean throwsExceptionOnConflict = true) {
 
         def query = name != null ? [name: name] : null
+
+        //If docker version is greater than 1.12,
+        // Both HostConfig of create and start apis should be sent in the create request
+        if (new VersionHelper(dockerClient.apiVersion, "1.24").compareAtoB() >= 0) { //Checks if api version is greater or equals to 1.24
+            createConfig.HostConfig = createConfig.HostConfig + startConfig.HostConfig
+        }
 
         def response
         try {
@@ -126,6 +133,14 @@ class DockerContainer {
         if (debugOutput) {
             println "Start container: ${name ? name : id} ${waitExecutionToEndInSec > 0 ? ", wait up to $waitExecutionToEndInSec seconds" : ""}"
         }
+
+        //From 1.12 HostConfig is no longer supported in start command
+        if (new VersionHelper(dockerClient.apiVersion, "1.24").compareAtoB() < 0) { //Checks if api version is lower than 1.24
+            startConfig = startConfig ? startConfig : this.startConfig.toJson()
+        } else {
+            startConfig = null
+        }
+
         try {
             def response = dockerClient.post(
                     "/containers/${id ? id : name}/start",
@@ -133,7 +148,7 @@ class DockerContainer {
                     ContentType.JSON,
                     null,
                     ContentType.JSON,
-                    startConfig ? startConfig : this.startConfig.toJson()
+                    startConfig
             )
         } catch (HttpResponseException hre) {
             System.err.println( "Start container ERROR: ${hre.getMessage()}" )
