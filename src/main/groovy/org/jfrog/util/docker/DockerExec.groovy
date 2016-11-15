@@ -30,6 +30,8 @@ class DockerExec {
     boolean attachStdin = false
     boolean attachStderr = false
     boolean tty = false
+    boolean privileged = false
+    String user = null
 
     String id
 
@@ -62,18 +64,42 @@ class DockerExec {
         return this
     }
 
+    DockerExec asUser(String user) {
+        this.user = user
+        return this
+    }
+
+    DockerExec withPrivileged(boolean privileged = true) {
+        this.privileged = privileged
+        return this
+    }
+
     /**
      * Create Exec instance, still not running, use with doStart().
      * @return DockerExec
      */
     DockerExec doCreate() {
+
+        Map body = [
+                AttachStdin: attachStdin,
+                AttachStdout: attachStdout,
+                AttachStderr: attachStderr,
+                Tty: tty,
+                Cmd: commands,
+                Privileged: privileged
+        ]
+
+        if (user) {
+            body.put("User", user)
+        }
+
         def response = dockerContainer.dockerClient.post(
                 "containers/${dockerContainer.id ? dockerContainer.id : dockerContainer.name}/exec",
                 null,
                 ContentType.JSON,
                 null,
                 ContentType.JSON,
-                new JsonBuilder([AttachStdin: attachStdin, AttachStdout: attachStdout, AttachStderr: attachStderr, Tty: tty, Cmd: commands]).toPrettyString(),
+                new JsonBuilder(body).toPrettyString(),
                 null
         )
         this.id = response.Id

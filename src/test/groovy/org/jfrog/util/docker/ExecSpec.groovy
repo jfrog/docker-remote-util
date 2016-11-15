@@ -75,6 +75,30 @@ class ExecSpec extends Specification {
         dockerContainer.doDelete(true, true)
     }
 
+    def "Exec command in running container with user" () {
+        when:
+        dockerImage = dockerClient.image().repository("busybox").doCreate()
+        then:
+        dockerImage.inspect()
+
+        when:
+        dockerContainer = dockerImage.getNewContainer("busybox-exec-user-www-data")
+        dockerContainer.createConfig.addCommand(["ping", "8.8.8.8"]).hostname("busybox-exec")
+        dockerContainer.doCreate()
+        then:
+        dockerContainer.inspect()
+
+        when:
+        dockerContainer.doStart()
+        dockerContainer.exec("touch /var/www/a.txt").asUser("www-data").doCreate().doStart()
+
+        then:
+        dockerContainer.exec("ls -al /var/www/a.txt").asUser("www-data").doCreate().doStart().contains("www-data")
+
+        cleanup:
+        dockerContainer.doDelete(true, true)
+    }
+
     def cleanupSpec() {
         dockerImage.doDelete(true)
     }
