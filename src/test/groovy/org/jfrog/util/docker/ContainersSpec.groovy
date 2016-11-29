@@ -31,6 +31,13 @@ class ContainersSpec extends Specification {
         dockerContainer = dockerImage.getNewContainer("busybox-container")
     }
 
+    def "Add command using container object" () {
+        when:
+        dockerContainer.addCommand("hostname")
+        then:
+        dockerContainer.createConfig.getCmd()[2] == "hostname;"
+    }
+
     def "Get list of all containers"() {
         when:
         def containers = dockerClient.getContainersFromServer()
@@ -138,7 +145,11 @@ class ContainersSpec extends Specification {
     }
 
     def cleanupSpec() {
-        dockerContainer.doDelete(true, true)
-        dockerImage.doDelete(true)
+        if (dockerContainer.isExists()) {
+            dockerContainer.doDelete(true, true)
+        }
+        if (dockerImage.isExists()) {
+            dockerImage.doDelete(true)
+        }
     }
 }
