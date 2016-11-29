@@ -396,10 +396,11 @@ class DockerContainer {
     }
 
     /**
-     * Add c
-     * @param command
-     * @param supportMultiCommand
-     * @return
+     * Add command to container. <br>
+     * NOTE: if EntryPoint is set with "exec $@" at the end to run another command,
+     * then the commands should be written as bash script and supportMultiCommand should be set as FALSE.
+     * (e.g. createConfig.addCommand("ifconfig ; hostname ; env", false))
+     * @param command Command to run inside container.
      */
     DockerContainer addCommand(def command) {
         createConfig.addCommand(command)
