@@ -395,6 +395,17 @@ class DockerContainer {
         return toReturn
     }
 
+    /**
+     * Add c
+     * @param command
+     * @param supportMultiCommand
+     * @return
+     */
+    DockerContainer addCommand(def command) {
+        createConfig.addCommand(command)
+        return this
+    }
+
     private void deleteTempFile(File downloadedTar) {
         if (!downloadedTar.delete()) {
             println "[INFO] $downloadedTar.name wasn't deleted."
