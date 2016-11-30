@@ -56,7 +56,7 @@ class ContainersSpec extends Specification {
         setup:
         dockerContainer.createConfig
                 .hostname("test-container")
-                .addCommand(["/bin/sh", "-c", "echo test has passed > /tmp/test.txt ; ping 8.8.8.8"])
+                .addCommand(["/bin/sh", "-c", "echo 'test has passed' > /tmp/test.txt ; ping 8.8.8.8"])
                 .addEnv("testEnv", "123")
 
         when:
@@ -95,6 +95,13 @@ class ContainersSpec extends Specification {
         stats.containsKey("cpu_stats")
     }
 
+    def "Get Container Exit Code When Running"() {
+        when:
+        int exitCode = dockerContainer.exitCode()
+        then:
+        exitCode == -1
+    }
+
     def "Get Container variables"() {
         when:
         Map variables = dockerContainer.getEnvs()
@@ -115,6 +122,14 @@ class ContainersSpec extends Specification {
         then:
         isRunning == false
     }
+
+    def "Get Container Exit Code When Stopped"() {
+        when:
+        int exitCode = dockerContainer.exitCode()
+        then:
+        exitCode != -1
+    }
+
 
     def "Collect logs"() {
         when:

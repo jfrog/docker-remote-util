@@ -37,7 +37,7 @@ class DockerContainer {
 
     CreateConfig createConfig
     StartConfig startConfig
-    State state = new State()
+    State state
 
     DockerContainer(DockerClient dockerClient, String image, String id = null) {
         this.dockerClient = dockerClient
@@ -46,6 +46,7 @@ class DockerContainer {
         this.startConfig = new StartConfig()
 
         this.id = id
+        this.state = new State()
     }
 
     /**
@@ -61,7 +62,8 @@ class DockerContainer {
 
         //If docker version is greater than 1.12,
         // Both HostConfig of create and start apis should be sent in the create request
-        if (new VersionHelper(dockerClient.apiVersion, "1.24").compareAtoB() >= 0) { //Checks if api version is greater or equals to 1.24
+        if (new VersionHelper(dockerClient.apiVersion, "1.24").compareAtoB() >= 0) {
+            //Checks if api version is greater or equals to 1.24
             createConfig.HostConfig = createConfig.HostConfig + startConfig.HostConfig
         }
 
@@ -147,7 +149,8 @@ class DockerContainer {
         }
 
         //From 1.12 HostConfig is no longer supported in start command
-        if (new VersionHelper(dockerClient.apiVersion, "1.24").compareAtoB() < 0) { //Checks if api version is lower than 1.24
+        if (new VersionHelper(dockerClient.apiVersion, "1.24").compareAtoB() < 0) {
+            //Checks if api version is lower than 1.24
             startConfig = startConfig ? startConfig : this.startConfig.toJson()
         } else {
             startConfig = null
@@ -163,9 +166,9 @@ class DockerContainer {
                     startConfig
             )
         } catch (HttpResponseException hre) {
-            System.err.println( "Start container ERROR: ${hre.getMessage()}" )
+            System.err.println("Start container ERROR: ${hre.getMessage()}")
             if (hre.response.data != null) {
-                System.err.println( "Start container ERROR: ${hre.response.data.text}" )
+                System.err.println("Start container ERROR: ${hre.response.data.text}")
             }
             throw hre
         }
@@ -231,7 +234,8 @@ class DockerContainer {
      * @param tty
      * @return DockerExec object which should be created using doCreate() and then started with doStart().
      */
-    DockerExec exec(def command, boolean attachStdout = true, boolean attachStdin = false, boolean attachStderr = false, boolean tty = false) {
+    DockerExec exec(
+            def command, boolean attachStdout = true, boolean attachStdin = false, boolean attachStderr = false, boolean tty = false) {
         assertIfEmpty()
         DockerExec dockerExec = new DockerExec(this, command)
 
@@ -279,11 +283,11 @@ class DockerContainer {
      * @return Exit code of a container, -1 if container still running.
      */
     int exitCode() {
-        State state = state()
+        state.init(inspect())
         if (state.isRunning()) {
             return -1
         }
-        return state.ExitCode
+        return state.exitCode
     }
 
     /**
@@ -296,7 +300,7 @@ class DockerContainer {
             this.inspect()
             return true
         } catch (HttpResponseException hre) {
-            if ( hre.response.getStatus() == 404) {
+            if (hre.response.getStatus() == 404) {
                 return false
             } else {
                 throw hre
@@ -314,7 +318,7 @@ class DockerContainer {
         //Replace all special characters related to the header of each line
         //https://docs.docker.com/engine/reference/api/docker_remote_api_v1.19/#attach-to-a-container
         if (logs) {
-            logs = logs.replaceAll("[\u0000\u0001\u0002]","")
+            logs = logs.replaceAll("[\u0000\u0001\u0002]", "")
         }
         return logs
     }
@@ -337,7 +341,7 @@ class DockerContainer {
      */
     def stats(boolean stream = false) {
         assertIfEmpty()
-        return get("${id ? id : name}/stats", ContentType.JSON, [stream:stream])
+        return get("${id ? id : name}/stats", ContentType.JSON, [stream: stream])
     }
 
     /**
@@ -362,7 +366,7 @@ class DockerContainer {
 
         inspectOutput.Config.Env.each {
             def (key, value) = it.split("=")
-            maps.put(key,value)
+            maps.put(key, value)
         }
 
         return maps.size() > 0 ? maps : null
@@ -375,13 +379,14 @@ class DockerContainer {
      * @param destinationFolder Folder to extract to, default is "tmp".
      * @return File and it places in project temp directory.
      */
+
     File downloadFile(String fileToExtract, String destinationFolder = null) {
-        HttpResponseDecorator response = dockerClient.client.post(
-                path: "/containers/${id ? id : name}/copy",
-                body: [Resource: fileToExtract],
-                requestContentType: ContentType.JSON,
-                contentType: ContentType.BINARY
-        )
+        HttpResponseDecorator response
+        if (dockerClient.apiVersion >= "1.24") {
+            response = downloadFileUsingArchive(fileToExtract, destinationFolder)
+        } else {
+            response = downloadFileUsingCopy(fileToExtract, destinationFolder)
+        }
 
         File tmpDir = createTempDirectory(destinationFolder)
 
@@ -393,6 +398,24 @@ class DockerContainer {
         deleteTempFile(downloadedTar)
 
         return toReturn
+    }
+
+    private HttpResponseDecorator downloadFileUsingArchive(String fileToExtract, String destinationFolder = null) {
+        return dockerClient.client.get(
+                path: "/containers/${id ? id : name}/archive",
+                query: [path: fileToExtract],
+                requestContentType: ContentType.JSON,
+                contentType: ContentType.BINARY
+        )
+    }
+
+    private HttpResponseDecorator downloadFileUsingCopy(String fileToExtract, String destinationFolder = null) {
+        return dockerClient.client.post(
+                path: "/containers/${id ? id : name}/copy",
+                body: [Resource: fileToExtract],
+                requestContentType: ContentType.JSON,
+                contentType: ContentType.BINARY
+        )
     }
 
     /**
