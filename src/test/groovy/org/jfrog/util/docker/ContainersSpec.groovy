@@ -58,6 +58,8 @@ class ContainersSpec extends Specification {
                 .hostname("test-container")
                 .addCommand(["/bin/sh", "-c", "echo 'test has passed' > /tmp/test.txt ; ping 8.8.8.8"])
                 .addEnv("testEnv", "123")
+                .addExposedPort(8081, "tcp")
+        dockerContainer.startConfig.publishAllPorts()
 
         when:
         dockerContainer.doCreate()
@@ -70,6 +72,13 @@ class ContainersSpec extends Specification {
         dockerContainer.doStart(5)
         then:
         dockerContainer.inspect().State.Running == true
+    }
+
+    def "Get External Port"() {
+        when:
+        int externalPort = dockerContainer.getExternalPort(8081, "tcp")
+        then:
+        externalPort != -1
     }
 
     def "Check if container exists"() {

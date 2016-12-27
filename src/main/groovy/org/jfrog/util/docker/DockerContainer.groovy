@@ -268,6 +268,19 @@ class DockerContainer {
         return get("${id ? id : name}/json", ContentType.JSON)
     }
 
+    int getExternalPort(int internalPort, String protocol = "tcp") {
+        String port = internalPort.toString()
+        //containerInfo.NetworkSettings.Ports."8081/tcp".HostPort[0]
+        def latestInspect = inspect()
+        def hostPorts = latestInspect.NetworkSettings.Ports.get(port + "/" + protocol)
+
+        if (hostPorts) {
+            return hostPorts.HostPort[0].toInteger()
+        }
+
+        return -1
+    }
+
     /**
      * Get State of a container, extracted from inspect.
      * @return Map of State element.
