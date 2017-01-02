@@ -165,6 +165,13 @@ class CreateConfig {
         return this
     }
 
+    CreateConfig addCommandAsBashScript(String command) {
+        if (cmd.size() > 0) {
+            cmd = [""]
+        }
+        cmd[0] = cmd[0] + command + ";"
+    }
+
     CreateConfig attachStderr(boolean attachStrerr) {
         this.AttachStderr = attachStrerr
         return this
