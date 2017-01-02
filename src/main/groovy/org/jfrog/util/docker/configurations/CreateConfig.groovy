@@ -165,11 +165,17 @@ class CreateConfig {
         return this
     }
 
-    CreateConfig addCommandAsBashScript(String command) {
+    CreateConfig addCommandAsBashScript(def command) {
+        String cmdToAdd
+        if (command instanceof GString) {
+            cmdToAdd = command.toString()
+        } else {
+            cmdToAdd = command
+        }
         if (cmd.size() > 0) {
             cmd = [""]
         }
-        cmd[0] = cmd[0] + command + ";"
+        cmd[0] = cmd[0] + cmdToAdd + ";"
     }
 
     CreateConfig attachStderr(boolean attachStrerr) {
