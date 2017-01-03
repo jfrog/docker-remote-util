@@ -174,8 +174,12 @@ class CreateConfig {
         }
         if (cmd.size() > 0) {
             cmd = [""]
+        } else if (!cmd[0]) {
+            cmd[0] = ""
         }
         cmd[0] = cmd[0] + cmdToAdd + ";"
+
+        return this
     }
 
     CreateConfig attachStderr(boolean attachStrerr) {
