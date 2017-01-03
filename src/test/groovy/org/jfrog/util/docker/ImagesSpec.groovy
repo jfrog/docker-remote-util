@@ -43,7 +43,7 @@ class ImagesSpec extends Specification {
 
     def "Create new image from public registry"() {
         when:
-        DockerImage dockerImage = dockerClient.image().repository("busybox").tag("ubuntu-14.04")
+        DockerImage dockerImage = dockerClient.image().repository("busybox").tag("latest")
 
         then:
         dockerImage.isExists() == false
@@ -58,8 +58,8 @@ class ImagesSpec extends Specification {
         when:
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
-                .namespace("templates")
                 .repository("busybox")
+                .tag("latest")
 
         then:
         dockerImage.doCreate()
@@ -69,7 +69,6 @@ class ImagesSpec extends Specification {
         when:
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
-                .namespace("templates")
                 .repository("busybox")
 
         then:
@@ -113,16 +112,14 @@ class ImagesSpec extends Specification {
     def "Search image"() {
         when:
         DockerImage dockerImage = dockerClient.image()
-                .registry(dockerPrivateRegistry)
-                .namespace("dockerclient")
                 .repository("busybox")
 
         and:
         List searchResults = dockerImage.doSearch()
 
         then:
-        searchResults.size() == 1
-        searchResults[0].name == "${dockerImage.repo}/${dockerImage.image}"
+        searchResults.size() > 0
+        searchResults[0].name == "${dockerImage.image}"
     }
 
     def "Delete image"() {
