@@ -165,6 +165,11 @@ class CreateConfig {
         return this
     }
 
+    /**
+     * Add command in a bash script form.
+     * NOTE: once using this command, it will overwrite any command added before using addCommand method.
+     * @param command command to add to the bash script
+     */
     CreateConfig addCommandAsBashScript(def command) {
         String cmdToAdd
         if (command instanceof GString) {
@@ -172,7 +177,7 @@ class CreateConfig {
         } else {
             cmdToAdd = command
         }
-        if (cmd.size() > 0) {
+        if (cmd.size() > 1) {
             cmd = [""]
         } else if (!cmd[0]) {
             cmd[0] = ""
