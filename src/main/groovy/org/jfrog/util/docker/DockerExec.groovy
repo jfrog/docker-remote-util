@@ -18,6 +18,7 @@ package org.jfrog.util.docker
 
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
+import org.apache.commons.lang.StringUtils
 
 /**
  * Created by matank on 5/31/15.
@@ -81,12 +82,12 @@ class DockerExec {
     DockerExec doCreate() {
 
         Map body = [
-                AttachStdin: attachStdin,
+                AttachStdin : attachStdin,
                 AttachStdout: attachStdout,
                 AttachStderr: attachStderr,
-                Tty: tty,
-                Cmd: commands,
-                Privileged: privileged
+                Tty         : tty,
+                Cmd         : commands,
+                Privileged  : privileged
         ]
 
         if (user) {
@@ -113,7 +114,7 @@ class DockerExec {
      * @return the output from the exec command.
      */
     String doStart(boolean detach = false, boolean tty = false) {
-        return dockerContainer.dockerClient.post(
+        String toReturn = dockerContainer.dockerClient.post(
                 "exec/${this.id}/start",
                 null,
                 ContentType.TEXT,
@@ -122,6 +123,11 @@ class DockerExec {
                 new JsonBuilder([Detach: detach, Tty: tty]).toPrettyString(),
                 null
         )
+
+        if (StringUtils.isNotEmpty(toReturn)) {
+            toReturn = toReturn.replaceAll("[\u0000\u0001\u0002]", "")
+        }
+        return toReturn
     }
 
     def inspect() {
