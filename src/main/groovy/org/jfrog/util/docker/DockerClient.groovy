@@ -355,7 +355,7 @@ class DockerClient {
      */
     def build(def dfb, DockerImage dockerImage, boolean removeTempContainers = false, boolean noCache = false) throws ClassCastException {
         if (dfb instanceof DockerFileBuilder || dfb instanceof File) {
-            build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers)
+            build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers, noCache)
             return dockerImage
         } else {
             throw new ClassCastException("dfb object must be File or DockerFileBuilder")
