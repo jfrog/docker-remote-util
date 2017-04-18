@@ -322,7 +322,7 @@ class DockerClient {
         )
     }
 
-    def build(DockerFileBuilder dfb, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false) {
+    def build(DockerFileBuilder dfb, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false, boolean noCache) {
         TarArchive tarArchive = new TarArchive("${dfb.folder}/Dockerfile.tar")
         for (File file : dfb.folder.listFiles()) {
             if (file.name != "Dockerfile.tar") {
@@ -336,7 +336,8 @@ class DockerClient {
                 ["dockerfile": "Dockerfile",
                  "t"         : "$image:$tag",
                  "q"         : "$quiet",
-                 "rm"        : "$removeTempContainers"],
+                 "rm"        : "$removeTempContainers",
+                 "nocache"   : "$noCache"],
                 ContentType.JSON,
                 null,
                 ContentType.BINARY,
