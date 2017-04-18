@@ -301,7 +301,7 @@ class DockerClient {
         ret
     }
 
-    def build(File dockerFile, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false) {
+    def build(File dockerFile, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false, boolean noCache) {
         TarArchive tarArchive = new TarArchive("${dockerFile.parent}/Dockerfile.tar")
         tarArchive.addFile(dockerFile)
         tarArchive.close()
@@ -311,7 +311,8 @@ class DockerClient {
                 ["dockerfile": "Dockerfile",
                  "t"         : "$image:$tag",
                  "q"         : "$quiet",
-                 "rm"        : "$removeTempContainers"],
+                 "rm"        : "$removeTempContainers",
+                 "nocache"   : "$noCache"],
                 ContentType.JSON,
                 null,
                 ContentType.BINARY,
@@ -352,7 +353,7 @@ class DockerClient {
      * @param removeTempContainers Keep temp containers created during the build, default is false
      * @throws ClassCastException If dfb is not File or DockerFileBuilder ClassCastException will be thrown.
      */
-    def build(def dfb, DockerImage dockerImage, boolean removeTempContainers = false) throws ClassCastException {
+    def build(def dfb, DockerImage dockerImage, boolean removeTempContainers = false, boolean noCache = false) throws ClassCastException {
         if (dfb instanceof DockerFileBuilder || dfb instanceof File) {
             build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers)
             return dockerImage
