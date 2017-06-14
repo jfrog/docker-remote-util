@@ -37,6 +37,8 @@ class DockerClient {
 
     private final String contextName
 
+    DockerRegistry dockerRegistry = null
+
     DockerClient(url) {
         if (url == null) {
             throw new NullPointerException("docker url cannot be null")
@@ -45,6 +47,12 @@ class DockerClient {
         client = new RESTClient(this.url)
         apiVersion = version().ApiVersion
         images = [:]
+
+        String dockerRegistryUser = System.getenv(DockerRegistry.DOCKER_REGISTRY_USER_ENV)
+        String dockerRegistryPassword = System.getenv(DockerRegistry.DOCKER_REGISTRY_PASSWORD_ENV)
+        if ( dockerRegistryUser && dockerRegistryPassword ) {
+            dockerRegistry = new DockerRegistry(null, dockerRegistryUser, dockerRegistryPassword)
+        }
     }
 
     DockerImage image() {
@@ -317,7 +325,7 @@ class DockerClient {
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
-                null,
+                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader() : null,
                 tarArchive.tarFile.size()
         )
     }
@@ -342,7 +350,7 @@ class DockerClient {
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
-                null,
+                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader() : null,
                 tarArchive.tarFile.size()
         )
     }
