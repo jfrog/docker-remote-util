@@ -5,8 +5,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * Created by matank on 4/27/15.
- */
+*  Created by matank on 4/27/15.
+*/
 class ImagesSpec extends Specification {
 
     @Shared
@@ -46,9 +46,9 @@ class ImagesSpec extends Specification {
         DockerImage dockerImage = dockerClient.image().repository("busybox").tag("latest")
 
         then:
-        dockerImage.isExists() == false
+        ! dockerImage.isExists()
         dockerImage.doCreate()
-        dockerImage.isExists() == true
+        dockerImage.isExists()
 
         and:
         dockerImage.doDelete()
@@ -57,7 +57,7 @@ class ImagesSpec extends Specification {
     def "Create new image from private registry"() {
         when:
         DockerImage dockerImage = dockerClient.image()
-                .registry(dockerPrivateRegistry)
+                .registry(new DockerRegistry(dockerPrivateRegistry, dockerPrivateRegistryUsername, dockerPrivateRegistryPassword))
                 .repository("busybox")
                 .tag("latest")
 
@@ -86,7 +86,7 @@ class ImagesSpec extends Specification {
 
         DockerImage targetImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
-                .namespace("dockerclient")
+                .namespace("artifactory-remote-util-test")
                 .repository("busybox")
 
         then:
@@ -102,7 +102,7 @@ class ImagesSpec extends Specification {
         DockerRegistry dockerRegistry = new DockerRegistry(dockerPrivateRegistry, dockerPrivateRegistryUsername, dockerPrivateRegistryPassword)
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerRegistry)
-                .namespace("dockerclient")
+                .namespace("artifactory-remote-util-test")
                 .repository("busybox")
 
         then:
@@ -126,7 +126,7 @@ class ImagesSpec extends Specification {
         when:
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
-                .namespace("dockerclient")
+                .namespace("artifactory-remote-util-test")
                 .repository("busybox")
 
         then:

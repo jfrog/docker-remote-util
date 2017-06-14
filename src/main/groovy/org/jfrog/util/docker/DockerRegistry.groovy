@@ -20,16 +20,27 @@ package org.jfrog.util.docker
  */
 class DockerRegistry {
 
+    static final String DOCKER_REGISTRY_USER_ENV="DOCKER_REGISTRY_USER"
+    static final String DOCKER_REGISTRY_PASSWORD_ENV="DOCKER_REGISTRY_PASSWORD"
+
     String registryHost
     String username
     String password
     String email
     String auth
 
+    /**
+     * Init DockerRegistry object
+     * @param registryHost - The Registry
+     * @param username - Username for authentication, If null, it will check if DOCKER_REGISTRY_USER env exists
+     * @param password - Password for authentication, If null, it will check if DOCKER_REGISTRY_PASSWORD env exists
+     * @param email
+     * @param auth
+     */
     DockerRegistry(String registryHost, String username = null, String password = null, String email = null, String auth = null) {
         this.registryHost = registryHost
-        this.username = username
-        this.password = password
+        this.username = username ? username : System.getenv(DOCKER_REGISTRY_USER_ENV)
+        this.password = password ? password : System.getenv(DOCKER_REGISTRY_PASSWORD_ENV)
     }
 
     String getXRegistryAuth() {
