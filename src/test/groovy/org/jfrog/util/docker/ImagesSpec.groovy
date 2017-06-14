@@ -86,7 +86,7 @@ class ImagesSpec extends Specification {
 
         DockerImage targetImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
-                .namespace("artifactory-remote-util-test")
+                .namespace("docker-remote-util-test")
                 .repository("busybox")
 
         then:
@@ -102,7 +102,7 @@ class ImagesSpec extends Specification {
         DockerRegistry dockerRegistry = new DockerRegistry(dockerPrivateRegistry, dockerPrivateRegistryUsername, dockerPrivateRegistryPassword)
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerRegistry)
-                .namespace("artifactory-remote-util-test")
+                .namespace("docker-remote-util-test")
                 .repository("busybox")
 
         then:
@@ -126,7 +126,7 @@ class ImagesSpec extends Specification {
         when:
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
-                .namespace("artifactory-remote-util-test")
+                .namespace("docker-remote-util-test")
                 .repository("busybox")
 
         then:
