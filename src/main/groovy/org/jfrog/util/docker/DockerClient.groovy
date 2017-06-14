@@ -325,7 +325,7 @@ class DockerClient {
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
-                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader() : null,
+                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader(true) : null,
                 tarArchive.tarFile.size()
         )
     }
@@ -350,7 +350,7 @@ class DockerClient {
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
-                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader() : null,
+                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader(true) : null,
                 tarArchive.tarFile.size()
         )
     }
@@ -381,5 +381,10 @@ class DockerClient {
 
     boolean setConnectionClose() {
         this.isKeepAlive = false
+    }
+
+    DockerClient withCredentials(DockerRegistry dockerRegistry) {
+        this.dockerRegistry = dockerRegistry
+        return this
     }
 }

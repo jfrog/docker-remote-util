@@ -15,6 +15,9 @@
  */
 
 package org.jfrog.util.docker
+
+import groovy.json.JsonOutput
+
 /**
  * Created by matank on 4/27/15.
  */
@@ -43,16 +46,22 @@ class DockerRegistry {
         this.password = password ? password : System.getenv(DOCKER_REGISTRY_PASSWORD_ENV)
     }
 
-    String getXRegistryAuth() {
-        return """{
+    String getXRegistryAuth(boolean getWithHost = false) {
+        String toReturn
+        if (! getWithHost) {
+            toReturn = """{
             \"username\":\"$username\",
             \"password\":\"$password\",
             \"auth\":\"${auth != null ? auth : ""}\",
-            \"email\":\"${email != null ? email : ""}\"}""".bytes.encodeBase64()
+            \"email\":\"${email != null ? email : ""}\"}"""
+        } else {
+            toReturn = JsonOutput.toJson(["$registryHost":["username":username, "password":password]])
+        }
+        return toReturn.bytes.encodeBase64()
     }
 
-    Map<String, String> getXRegistryAuthHeader() {
-        return ["X-Registry-Auth": getXRegistryAuth()]
+    Map<String, String> getXRegistryAuthHeader(boolean getWithHost = false) {
+        return ["X-Registry-Auth": getXRegistryAuth(getWithHost)]
     }
 
     boolean equals(o) {

@@ -161,6 +161,33 @@ class ImagesSpec extends Specification {
 
     }
 
+    def "Build Docker Image with credentials"() {
+        setup:
+        DockerImage dockerImage = dockerClient.image()
+                .namespace("artifactory")
+                .repository("artifactory-rpm")
+                .tag("3.7.0")
+        DockerFileBuilder dfb = new DockerFileBuilder(new File(this.getClass().getResource("").path))
+
+        when:
+        dfb.from("$dockerPrivateRegistry/centos", "6.6").
+                run("yum install -y wget && yum install -y rsync").
+                copy(this.getClass().getResource("b.txt").path, "/var/opt/jfrog/artifactory/etc/artifactory.system.properties").
+                copy(this.getClass().getResource("a/a.txt").path, "/tmp/").
+                cmd("service artifactory wait").
+                create()
+
+        then:
+        dockerClient.withCredentials(new DockerRegistry(dockerPrivateRegistry, dockerPrivateRegistryUsername, dockerPrivateRegistryPassword)).build(dfb, dockerImage) != null
+
+        and:
+        println dockerImage.inspect()
+
+        cleanup:
+        dfb.close()
+
+    }
+
     def "Build Docker Image without cache"() {
         setup:
         DockerImage dockerImage = dockerClient.image()
