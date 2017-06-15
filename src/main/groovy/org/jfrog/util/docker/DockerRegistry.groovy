@@ -55,7 +55,7 @@ class DockerRegistry {
             \"auth\":\"${auth != null ? auth : ""}\",
             \"email\":\"${email != null ? email : ""}\"}"""
         } else {
-            toReturn = JsonOutput.toJson(["$registryHost":["username":username, "password":password]])
+            toReturn = JsonOutput.toJson(["$registryHost":["username":username, "password":password, "serveraddress": registryHost]])
         }
         return toReturn.bytes.encodeBase64()
     }

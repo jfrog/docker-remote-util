@@ -314,6 +314,12 @@ class DockerClient {
         tarArchive.addFile(dockerFile)
         tarArchive.close()
 
+        Map headers = [:]
+
+        if (dockerRegistry) {
+            headers = headers + ["X-Registry-Config" : dockerRegistry.getXRegistryAuth(true)]
+        }
+
         this.post(
                 "build",
                 ["dockerfile": "Dockerfile",
@@ -325,7 +331,7 @@ class DockerClient {
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
-                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader(true) : null,
+                headers,
                 tarArchive.tarFile.size()
         )
     }
@@ -339,6 +345,12 @@ class DockerClient {
         }
         tarArchive.close()
 
+        Map headers = [:]
+
+        if (dockerRegistry) {
+            headers = headers + ["X-Registry-Config" : dockerRegistry.getXRegistryAuth(true)]
+        }
+
         this.post(
                 "build",
                 ["dockerfile": "Dockerfile",
@@ -350,7 +362,7 @@ class DockerClient {
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
-                dockerRegistry ? dockerRegistry.getXRegistryAuthHeader(true) : null,
+                headers,
                 tarArchive.tarFile.size()
         )
     }
