@@ -50,9 +50,13 @@ class DockerClient {
 
         String dockerRegistryUser = System.getenv(DockerRegistry.DOCKER_REGISTRY_USER_ENV)
         String dockerRegistryPassword = System.getenv(DockerRegistry.DOCKER_REGISTRY_PASSWORD_ENV)
-        if ( dockerRegistryUser && dockerRegistryPassword ) {
+        if (dockerRegistryUser && dockerRegistryPassword) {
             dockerRegistry = new DockerRegistry(null, dockerRegistryUser, dockerRegistryPassword)
         }
+    }
+
+    DockerVolume volume() {
+        return new DockerVolume(this)
     }
 
     DockerImage image() {
@@ -317,7 +321,7 @@ class DockerClient {
         Map headers = [:]
 
         if (dockerRegistry) {
-            headers = headers + ["X-Registry-Config" : dockerRegistry.getXRegistryAuth(true)]
+            headers = headers + ["X-Registry-Config": dockerRegistry.getXRegistryAuth(true)]
         }
 
         this.post(
@@ -348,7 +352,7 @@ class DockerClient {
         Map headers = [:]
 
         if (dockerRegistry) {
-            headers = headers + ["X-Registry-Config" : dockerRegistry.getXRegistryAuth(true)]
+            headers = headers + ["X-Registry-Config": dockerRegistry.getXRegistryAuth(true)]
         }
 
         this.post(
@@ -374,7 +378,8 @@ class DockerClient {
      * @param removeTempContainers Keep temp containers created during the build, default is false
      * @throws ClassCastException If dfb is not File or DockerFileBuilder ClassCastException will be thrown.
      */
-    def build(def dfb, DockerImage dockerImage, boolean removeTempContainers = false, boolean noCache = false) throws ClassCastException {
+    def build(
+            def dfb, DockerImage dockerImage, boolean removeTempContainers = false, boolean noCache = false) throws ClassCastException {
         if (dfb instanceof DockerFileBuilder || dfb instanceof File) {
             build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers, noCache)
             return dockerImage
