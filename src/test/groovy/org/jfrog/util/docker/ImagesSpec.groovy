@@ -46,7 +46,6 @@ class ImagesSpec extends Specification {
         DockerImage dockerImage = dockerClient.image().repository("busybox").tag("latest")
 
         then:
-        ! dockerImage.isExists()
         dockerImage.doCreate()
         dockerImage.isExists()
 
