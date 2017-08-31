@@ -2,10 +2,24 @@ package org.jfrog.util.artifactory
 
 import groovy.json.JsonOutput
 import org.jfrog.artifactory.client.Artifactory
+import org.jfrog.artifactory.client.ArtifactoryClientBuilder
 import org.jfrog.artifactory.client.ArtifactoryRequest
 import org.jfrog.artifactory.client.impl.ArtifactoryRequestImpl
 
 class ArtifactoryUtil {
+
+    static String getLatestTag(String repository, String image, String tag = null) {
+        return this.getLatestTag(
+                ArtifactoryClientBuilder.create()
+                        .setUrl(getArtifactoryContextUrl())
+                        .setUsername(getArtifactoryUser())
+                        .setPassword(getArtifactoryPassword())
+                        .build(),
+                repository,
+                image,
+                tag
+        )
+    }
 
     /**
      * Get latest pushed tag for a specific repository using AQL.
@@ -40,6 +54,22 @@ class ArtifactoryUtil {
                 .responseType(ArtifactoryRequest.ContentType.JSON)
 
         return artifactory.restCall(aqlRequest).results[0]?.name
+    }
+
+    static String getArtifactoryContextUrl() {
+        return getProperty("artifactory_contextUrl")
+    }
+
+    static String getArtifactoryUser() {
+        return getProperty("artifactory_user")
+    }
+
+    static String getArtifactoryPassword() {
+        return getProperty("artifactory_password")
+    }
+
+    static String getProperty(String property) {
+        return System.getProperty(property) ?: System.getenv(property)
     }
 
 }
