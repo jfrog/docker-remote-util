@@ -57,18 +57,18 @@ class ArtifactoryUtil {
     }
 
     static String getArtifactoryContextUrl() {
-        return getProperty("artifactory_contextUrl")
+        return getProp("artifactory_contextUrl")
     }
 
     static String getArtifactoryUser() {
-        return getProperty("artifactory_user")
+        return getProp("artifactory_user")
     }
 
     static String getArtifactoryPassword() {
-        return getProperty("artifactory_password")
+        return getProp("artifactory_password")
     }
 
-    static String getProperty(String property) {
+    static String getProp(String property) {
         return System.getProperty(property) ?: System.getenv(property)
     }
 
