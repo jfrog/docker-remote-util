@@ -355,20 +355,37 @@ class DockerClient {
             headers = headers + ["X-Registry-Config": dockerRegistry.getXRegistryAuth(true)]
         }
 
-        this.post(
+        String response = this.post(
                 "build",
                 ["dockerfile": "Dockerfile",
                  "t"         : "$image:$tag",
                  "q"         : "$quiet",
                  "rm"        : "$removeTempContainers",
                  "nocache"   : "$noCache"],
-                ContentType.JSON,
+                ContentType.TEXT,
                 null,
                 ContentType.BINARY,
                 tarArchive.tarFile.bytes,
                 headers,
                 tarArchive.tarFile.size()
         )
+
+        List buildResponse = []
+
+        response.eachLine {
+            buildResponse.add(new JsonSlurper().parseText(it))
+        }
+
+        if (buildResponse.size() > 0 && buildResponse[-1].containsKey("error")) {
+            buildResponse.each { line ->
+                line.each { key, value ->
+                    System.err.println value
+                }
+            }
+            throw new RuntimeException(buildResponse[-1].get("error"))
+        }
+
+        return buildResponse
     }
 
     /**
