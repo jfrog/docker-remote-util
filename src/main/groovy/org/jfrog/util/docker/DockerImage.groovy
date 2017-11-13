@@ -302,4 +302,8 @@ class DockerImage {
 
         return true
     }
+
+    String getImageId() {
+        return this.getFullImageName(true)
+    }
 }
