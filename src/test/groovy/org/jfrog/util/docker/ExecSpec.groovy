@@ -90,10 +90,10 @@ class ExecSpec extends Specification {
 
         when:
         dockerContainer.doStart()
-        dockerContainer.exec("touch /var/www/a.txt").asUser("www-data").doCreate().doStart()
 
         then:
-        dockerContainer.exec("ls -al /var/www/a.txt").asUser("www-data").doCreate().doStart().contains("www-data")
+        dockerContainer.exec("whoami").doCreate().doStart().contains("root")
+        dockerContainer.exec("whoami").asUser("www-data").doCreate().doStart().contains("www-data")
 
         cleanup:
         dockerContainer.doDelete(true, true)
