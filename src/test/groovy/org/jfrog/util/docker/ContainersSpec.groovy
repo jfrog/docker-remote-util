@@ -95,6 +95,17 @@ class ContainersSpec extends Specification {
         isRunning == true
     }
 
+    def "Check if container is paused"() {
+        when:
+        dockerContainer.doPause()
+        then:
+        dockerContainer.state.isPaused()
+        when:
+        dockerContainer.doUnPause()
+        then:
+        ! dockerContainer.state.isPaused()
+    }
+
     def "Get Container stats"() {
         when:
         Map stats = dockerContainer.stats()

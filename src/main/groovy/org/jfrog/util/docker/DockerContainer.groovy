@@ -225,6 +225,36 @@ class DockerContainer {
     }
 
     /**
+     * Pause all container processes.<br>
+     */
+    DockerContainer doPause() {
+        dockerClient.post(
+                "/containers/${id ? id : name}/pause",
+                null,
+                ContentType.JSON,
+                null,
+                ContentType.JSON
+        )
+
+        return this
+    }
+
+    /**
+     * Pause all container processes.<br>
+     */
+    DockerContainer doUnPause() {
+        dockerClient.post(
+                "/containers/${id ? id : name}/unpause",
+                null,
+                ContentType.JSON,
+                null,
+                ContentType.JSON
+        )
+
+        return this
+    }
+
+    /**
      * Exec another process inside this container, available only if the container is in Running state. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#exec-create
      * @param command Command to execute inside the container

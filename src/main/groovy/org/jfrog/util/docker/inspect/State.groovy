@@ -36,4 +36,8 @@ class State {
     boolean isRunning() {
         return running
     }
+
+    boolean isPaused() {
+        return paused
+    }
 }
