@@ -69,6 +69,7 @@ class ImagesSpec extends Specification {
         DockerImage dockerImage = dockerClient.image()
                 .registry(dockerPrivateRegistry)
                 .repository("busybox")
+                .doCreate()
 
         then:
         dockerImage.history().size() > 0
