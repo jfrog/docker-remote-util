@@ -4,6 +4,7 @@ import groovy.json.JsonOutput
 import org.jfrog.artifactory.client.Artifactory
 import org.jfrog.artifactory.client.ArtifactoryClientBuilder
 import org.jfrog.artifactory.client.ArtifactoryRequest
+import org.jfrog.artifactory.client.ArtifactoryResponse
 import org.jfrog.artifactory.client.impl.ArtifactoryRequestImpl
 
 class ArtifactoryUtil {
@@ -53,7 +54,13 @@ class ArtifactoryUtil {
                 .requestBody(aqlQuery)
                 .responseType(ArtifactoryRequest.ContentType.JSON)
 
-        return artifactory.restCall(aqlRequest).results[0]?.name
+        ArtifactoryResponse artifactoryResponse = artifactory.restCall(aqlRequest)
+
+        assertOnFailure(artifactoryResponse)
+
+        List results = artifactoryResponse.parseBody(Map.class).results
+
+        return results[0].name
     }
 
     static String getArtifactoryContextUrl() {
@@ -70,6 +77,12 @@ class ArtifactoryUtil {
 
     static String getProp(String property) {
         return System.getProperty(property) ?: System.getenv(property)
+    }
+
+    static private void assertOnFailure(ArtifactoryResponse artifactoryResponse) {
+        if (! artifactoryResponse.isSuccessResponse()) {
+            throw new RuntimeException("Artifactory responded with: '${artifactoryResponse.getStatusLine()}'")
+        }
     }
 
 }

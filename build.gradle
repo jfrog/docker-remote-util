@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     compile(group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.3')
-    compile(group: 'org.jfrog.artifactory.client', name: 'artifactory-java-client-services', version: '2.5.2')
+    compile(group: 'org.jfrog.artifactory.client', name: 'artifactory-java-client-services', version: '2.6.0')
     compile(group: 'com.google.code.gson', name: 'gson', version: '2.3.1')
     compile(group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7')
     compile(group: 'org.apache.commons', name: 'commons-compress', version: '1.9')

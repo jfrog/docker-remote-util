@@ -5,25 +5,25 @@ import org.jfrog.artifactory.client.ArtifactoryClientBuilder
 import spock.lang.Requires
 import spock.lang.Specification
 
-@Requires({
-    System.getProperty("artifactory_contextUrl") &&
-            System.getProperty("artifactory_user") &&
-            System.getProperty("artifactory_password") &&
-            System.getProperty("docker_repository") &&
-            System.getProperty("docker_tag")
-})
+//@Requires({
+//    System.getProperty("artifactory_contextUrl") &&
+//            System.getProperty("artifactory_user") &&
+//            System.getProperty("artifactory_password") &&
+//            System.getProperty("docker_repository") &&
+//            System.getProperty("docker_tag")
+//})
 class ArtifactoryUtilSpec extends Specification {
 
     def "Get latest tag without tag layout"() {
         setup:
         Artifactory artifactory = ArtifactoryClientBuilder
                 .create()
-                .setUrl(System.getProperty("artifactory_contextUrl"))
-                .setUsername(System.getProperty("artifactory_user"))
-                .setPassword(System.getProperty("artifactory_password"))
+                .setUrl(System.getenv("artifactory_contextUrl"))
+                .setUsername(System.getenv("artifactory_user"))
+                .setPassword(System.getenv("artifactory_password"))
                 .build()
         when:
-        String latestTag = ArtifactoryUtil.getLatestTag(artifactory, System.getProperty("docker_repository"), "jfrog/artifactory-*")
+        String latestTag = ArtifactoryUtil.getLatestTag(artifactory, System.getenv("docker_repository"), "jfrog/artifactory-*")
         then:
         latestTag
     }
@@ -32,13 +32,13 @@ class ArtifactoryUtilSpec extends Specification {
         setup:
         Artifactory artifactory = ArtifactoryClientBuilder
                 .create()
-                .setUrl(System.getProperty("artifactory_contextUrl"))
-                .setUsername(System.getProperty("artifactory_user"))
-                .setPassword(System.getProperty("artifactory_password"))
+                .setUrl(System.getenv("artifactory_contextUrl"))
+                .setUsername(System.getenv("artifactory_user"))
+                .setPassword(System.getenv("artifactory_password"))
                 .build()
         when:
-        String latestTag = ArtifactoryUtil.getLatestTag(artifactory, System.getProperty("docker_repository"), "jfrog/artifactory-*", "*"+System.getProperty("docker_tag") + "*")
+        String latestTag = ArtifactoryUtil.getLatestTag(artifactory, System.getenv("docker_repository"), "jfrog/artifactory-*", "*"+System.getenv("docker_tag") + "*")
         then:
-        latestTag.contains(System.getProperty("docker_tag"))
+        latestTag.contains(System.getenv("docker_tag"))
     }
 }
