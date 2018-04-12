@@ -55,9 +55,15 @@ class DockerImage {
      * Creates the image on the docker server, by pulling it if not exists. <br>
      * The response can be collected using "dockerImage.response".
      */
-    DockerImage doCreate() {
+    DockerImage doCreate(boolean pullAll = false) {
         Map<String, String> query = [fromImage: getFullImageName(false)]
-        if (tag != null) query.put("tag", tag)
+        if (! pullAll) {
+            if (tag != null) {
+                query.put("tag", tag)
+            } else {
+                query.put("tag", "latest")
+            }
+        }
 
         def response = post("create",
                 ContentType.JSON,
