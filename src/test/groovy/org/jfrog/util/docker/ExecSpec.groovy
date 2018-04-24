@@ -99,6 +99,32 @@ class ExecSpec extends Specification {
         dockerContainer.doDelete(true, true)
     }
 
+    def "Get exit code of exec command" () {
+        when:
+        dockerImage = dockerClient.image().repository("busybox").doCreate()
+        then:
+        dockerImage.inspect()
+
+        when:
+        dockerContainer = dockerImage.getNewContainer("busybox-exec-keep-alive")
+        dockerContainer.createConfig.addCommand(["ping", "8.8.8.8"]).hostname("busybox-exec")
+        dockerContainer.doCreate()
+        then:
+        dockerContainer.inspect()
+
+        and:
+        dockerContainer.doStart()
+
+        when:
+        dockerExec = dockerContainer.exec("env").doCreate()
+        dockerExec.doStart()
+        then:
+        dockerExec.exitCode() == 0
+
+        cleanup:
+        dockerContainer.doDelete(true, true)
+    }
+
     def cleanupSpec() {
         dockerImage.doDelete(true)
     }

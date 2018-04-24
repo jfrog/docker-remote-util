@@ -19,6 +19,7 @@ package org.jfrog.util.docker
 import groovy.json.JsonBuilder
 import groovyx.net.http.ContentType
 import org.apache.commons.lang.StringUtils
+import org.jfrog.util.docker.inspect.State
 
 /**
  * Created by matank on 5/31/15.
@@ -36,6 +37,8 @@ class DockerExec {
 
     String id
 
+    State state
+
     DockerExec(DockerContainer dockerContainer, def commands) {
         this.dockerContainer = dockerContainer
         this.commands = (commands instanceof String || commands instanceof GString) ? commands.split(" ") : commands
@@ -43,6 +46,8 @@ class DockerExec {
         this.attachStdout = attachStdout
         this.attachStderr = attachStderr
         this.tty = tty
+
+        state = new State()
     }
 
     DockerExec withAttachStdin(boolean attachStdin = true) {
@@ -132,5 +137,17 @@ class DockerExec {
 
     def inspect() {
         return dockerContainer.dockerClient.get("exec/$id/json", ContentType.JSON)
+    }
+
+    /**
+     * Get status code of a container. <br>
+     * @return Exit code of a container, -1 if container still running.
+     */
+    int exitCode() {
+        state.init(inspect(), true)
+        if (state.isRunning()) {
+            return -1
+        }
+        return state.exitCode
     }
 }

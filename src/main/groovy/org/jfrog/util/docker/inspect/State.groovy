@@ -18,18 +18,18 @@ class State {
     String startedAt
     String finishedAt
 
-    State init(Map inspect) {
-        Map state = inspect.get(STATE)
-        this.status = state.Status
-        this.running = state.Running.toBoolean()
-        this.paused = state.Paused.toBoolean()
-        this.restarting = state.Restarting.toBoolean()
-        this.dead = state.Dead.toBoolean()
-        this.pid = state.Pid.toInteger()
-        this.exitCode = state.ExitCode.toInteger()
-        this.error = state.Error
-        this.startedAt = state.StartedAt
-        this.finishedAt = state.FinishedAt
+    State init(Map inspect, boolean isExec = false) {
+        Map map = isExec ? inspect : inspect.get(STATE)
+        this.status = map.Status
+        this.running = map.Running?.toBoolean()
+        this.paused = map.Paused?.toBoolean()
+        this.restarting = map.Restarting?.toBoolean()
+        this.dead = map.Dead?.toBoolean()
+        this.pid = map.Pid?.toInteger()
+        this.exitCode = map.ExitCode?.toInteger()
+        this.error = map.Error
+        this.startedAt = map.StartedAt
+        this.finishedAt = map.FinishedAt
         return this
     }
 
