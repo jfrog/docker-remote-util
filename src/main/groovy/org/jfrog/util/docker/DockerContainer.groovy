@@ -436,6 +436,7 @@ class DockerContainer {
         File tarToUpload = File.createTempFile(fileToUpload.split("/")[-1], ".tar")
         TarArchive archive = new TarArchive(tarToUpload)
         archive.addFile(new File(fileToUpload))
+        archive.close()
         uploadFileUsingArchive(tarToUpload.getBytes(), destinationFolder)
         deleteTempFile(tarToUpload)
     }
