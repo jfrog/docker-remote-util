@@ -173,10 +173,20 @@ class DockerContainer {
             throw hre
         }
 
-
-        while (waitExecutionToEndInSec > 0) {
-            if (this.inspect().State.Running == false) {
-                break
+        def endTime = System.currentTimeSeconds() + waitExecutionToEndInSec
+        boolean runOnce = false
+        while (System.currentTimeSeconds() < endTime) {
+            try{
+                if (this.inspect().State.Running == false) {
+                    break
+                }
+                runOnce = true
+            } catch (Exception e) {
+                if (runOnce) {
+                    println "Container doesn't exist, assuming it removed."
+                } else {
+                    throw e
+                }
             }
             sleep(1000)
             waitExecutionToEndInSec--
