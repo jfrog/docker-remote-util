@@ -69,6 +69,18 @@ class DockerFileSpec extends Specification {
         dockerFileBuilder.commands[-1] == "CMD [\"apt-get\",\"update\",\"&&\",\"apt-get\",\"install\",\"-y\",\"wget\"]"
     }
 
+    def "SHELL command"() {
+        when:
+        dockerFileBuilder.shell "powershell -Command \"key = 'Stop'; key2 = 'SilentlyContinue';\""
+        then:
+        dockerFileBuilder.commands[-1] == "SHELL powershell -Command \"key = 'Stop'; key2 = 'SilentlyContinue';\""
+
+        when:
+        dockerFileBuilder.shell "powershell", "-Command", "key = 'Stop'; key2 = 'SilentlyContinue';"
+        then:
+        dockerFileBuilder.commands[-1] == "SHELL [\"powershell\",\"-Command\",\"key = 'Stop'; key2 = 'SilentlyContinue';\"]"
+    }
+
     def "LABEL command"() {
         when:
         dockerFileBuilder.label "label-without-value"

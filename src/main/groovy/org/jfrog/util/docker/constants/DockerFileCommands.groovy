@@ -33,5 +33,6 @@ enum DockerFileCommands {
     VOLUME,
     USER,
     WORKDIR,
-    ONBUILD
+    ONBUILD,
+    SHELL
 }
