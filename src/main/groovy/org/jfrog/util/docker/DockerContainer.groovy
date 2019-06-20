@@ -25,6 +25,8 @@ import org.jfrog.util.docker.inspect.State
 import org.jfrog.util.docker.utils.TarArchive
 import org.jfrog.util.docker.utils.VersionHelper
 
+import java.util.concurrent.TimeoutException
+
 /**
  * Created by matank on 12/22/2014.
  */
@@ -178,21 +180,20 @@ class DockerContainer {
         while (System.currentTimeSeconds() < endTime) {
             try{
                 if (this.inspect().State.Running == false) {
-                    break
+                    return this
                 }
                 runOnce = true
             } catch (Exception e) {
                 if (runOnce) {
-                    println "Container doesn't exist, assuming it removed."
+                    println "Container doesn't exist, assuming it was removed."
                 } else {
                     throw e
                 }
             }
             sleep(1000)
-            waitExecutionToEndInSec--
         }
 
-        return this
+        throw new TimeoutException("The container did not stop in allotted time - ${waitExecutionToEndInSec} sec")
     }
 
     /**
