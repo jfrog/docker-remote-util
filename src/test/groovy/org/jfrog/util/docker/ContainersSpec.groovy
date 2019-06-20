@@ -94,14 +94,25 @@ class ContainersSpec extends Specification {
         when:
         def exists = dockerContainer.isExists()
         then:
-        exists == true
+        exists
     }
 
     def "Check if container is running"() {
         when:
         boolean isRunning = dockerContainer.state.isRunning()
         then:
-        isRunning == true
+        isRunning
+    }
+
+    def "Check copy into container"() {
+        when:
+        def filePath = this.getClass().getResource("c.txt").path
+
+        dockerContainer.copyTo(filePath, "/tmp")
+        def lsOutput = dockerContainer.exec("cat /tmp/c.txt").tty(true).doCreate().doStart()
+
+        then:
+        lsOutput.contains("my data")
     }
 
     def "Check if container is paused"() {
@@ -149,7 +160,7 @@ class ContainersSpec extends Specification {
         when:
         boolean isRunning = dockerContainer.state.isRunning()
         then:
-        isRunning == false
+        !isRunning
     }
 
     def "Get Container Exit Code When Stopped"() {

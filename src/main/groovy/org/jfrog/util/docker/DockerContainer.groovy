@@ -402,6 +402,16 @@ class DockerContainer {
     }
 
     /**
+     * Copy local file into the container. <br>
+     * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
+     * @param sourceFilePath Path to a local file or a folder to push into the container archive.
+     * @param destinationFolder Folder inside the container to copy
+     */
+    def copyTo(String sourceFilePath, String destinationFolder) {
+        uploadFile(sourceFilePath, destinationFolder)
+    }
+
+    /**
      * Download file from the container. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
      * @param fileToExtract File to download, pass full path, or relative to last working directory.
@@ -430,6 +440,22 @@ class DockerContainer {
     }
 
     /**
+     * Upload file to the container. <br>
+     * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
+     * @param fileToUpload Path to the file to upload, pass full path, or relative to last working directory.
+     * @param destinationFolder Folder to upload to
+     */
+
+    def uploadFile(String fileToUpload, String destinationFolder) {
+        File tarToUpload = File.createTempFile(fileToUpload.split("/")[-1], ".tar")
+        TarArchive archive = new TarArchive(tarToUpload)
+        archive.addFile(new File(fileToUpload))
+        archive.close()
+        uploadFileUsingArchive(tarToUpload.getBytes(), destinationFolder)
+        deleteTempFile(tarToUpload)
+    }
+
+    /**
      * Download file from the container. <br>
      * https://docs.docker.com/reference/api/docker_remote_api_v1.18/#copy-files-or-folders-from-a-container
      * @param fileToExtract File to download, pass full path, or relative to last working directory.
@@ -455,6 +481,16 @@ class DockerContainer {
         deleteTempFile(downloadedTar)
 
         return toReturn
+    }
+
+    private HttpResponseDecorator uploadFileUsingArchive(byte[] compressed, String destinationFolder) {
+        return dockerClient.client.put(
+                path: "/containers/${id ? id : name}/archive",
+                query: [path: destinationFolder],
+                body: compressed,
+                requestContentType: ContentType.BINARY,
+                contentType: ContentType.BINARY
+        )
     }
 
     private HttpResponseDecorator downloadFileUsingArchive(String fileToExtract, String destinationFolder = null) {
