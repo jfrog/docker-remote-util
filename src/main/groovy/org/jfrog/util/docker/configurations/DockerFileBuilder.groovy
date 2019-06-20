@@ -91,6 +91,10 @@ class DockerFileBuilder {
         return this.addCommandToCommandsList(getCommandInListForm(onBuild, DockerFileCommands.CMD, args))
     }
 
+    DockerFileBuilder shell(boolean onBuild = false, String... args) {
+        return this.addCommandToCommandsList(getCommandInListForm(onBuild, DockerFileCommands.SHELL, args))
+    }
+
     DockerFileBuilder entryPoint(boolean onBuild = false, String... args) {
         return this.addCommandToCommandsList(getCommandInListForm(onBuild, DockerFileCommands.ENTRYPOINT, args))
     }
