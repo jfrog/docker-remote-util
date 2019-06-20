@@ -193,7 +193,10 @@ class DockerContainer {
             sleep(1000)
         }
 
-        throw new TimeoutException("The container did not stop in allotted time - ${waitExecutionToEndInSec} sec")
+        if (waitExecutionToEndInSec > 0) { // zero wait means async trigger, no need to throw error if not ended
+            throw new TimeoutException("The container did not stop in allotted time - ${waitExecutionToEndInSec} sec")
+        }
+        return this
     }
 
     /**

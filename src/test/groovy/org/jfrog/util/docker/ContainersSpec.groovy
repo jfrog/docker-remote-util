@@ -6,6 +6,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
+import java.util.concurrent.TimeoutException
+
 /**
  * Created by matank on 4/28/15.
  */
@@ -67,9 +69,16 @@ class ContainersSpec extends Specification {
         dockerContainer.inspect()
     }
 
+    def "Start container with timeout"() {
+        when:
+        dockerContainer.doStart(2)
+        then:
+        thrown(TimeoutException)
+    }
+
     def "Start container"() {
         when:
-        dockerContainer.doStart(5)
+        dockerContainer.doStart()
         then:
         dockerContainer.inspect().State.Running == true
     }
