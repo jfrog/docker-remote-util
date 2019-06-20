@@ -25,6 +25,8 @@ import org.jfrog.util.docker.inspect.State
 import org.jfrog.util.docker.utils.TarArchive
 import org.jfrog.util.docker.utils.VersionHelper
 
+import java.util.concurrent.TimeoutException
+
 /**
  * Created by matank on 12/22/2014.
  */
@@ -176,13 +178,13 @@ class DockerContainer {
 
         while (waitExecutionToEndInSec > 0) {
             if (this.inspect().State.Running == false) {
-                break
+                return this
             }
             sleep(1000)
             waitExecutionToEndInSec--
         }
 
-        return this
+        throw new TimeoutException("The container did not stop in allotted time - ${waitExecutionToEndInSec} sec")
     }
 
     /**
