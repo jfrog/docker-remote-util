@@ -39,11 +39,18 @@ class DockerRegistry {
      * @param password - Password for authentication, If null, it will check if DOCKER_REGISTRY_PASSWORD env exists
      * @param email
      * @param auth
+     * @param anonymousAccess - if DOCKER_REGISTRY_USER and DOCKER_REGISTRY_PASSWORD is set, then ignores them.
      */
-    DockerRegistry(String registryHost, String username = null, String password = null, String email = null, String auth = null) {
+    DockerRegistry(String registryHost, String username = null, String password = null, String email = null, String auth = null, boolean anonymousAccess = false) {
         this.registryHost = registryHost
-        this.username = username ? username : System.getenv(DOCKER_REGISTRY_USER_ENV)
-        this.password = password ? password : System.getenv(DOCKER_REGISTRY_PASSWORD_ENV)
+        if (!anonymousAccess) {
+            this.username = username ? username : System.getenv(DOCKER_REGISTRY_USER_ENV)
+            this.password = password ? password : System.getenv(DOCKER_REGISTRY_PASSWORD_ENV)
+        }
+    }
+
+    DockerRegistry(String registryHost, Boolean anonymousAccess) {
+        this(registryHost, null, null, null, null, anonymousAccess)
     }
 
     String getXRegistryAuth(boolean getWithHost = false) {
