@@ -243,6 +243,7 @@ class CreateConfig {
         entryPoints.each {
             this.addEntryPoint(it)
         }
+        return this
     }
 
     /**
