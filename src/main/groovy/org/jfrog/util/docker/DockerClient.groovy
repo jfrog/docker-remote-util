@@ -313,7 +313,7 @@ class DockerClient {
         ret
     }
 
-    def build(File dockerFile, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false, boolean noCache) {
+    def build(File dockerFile, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false, boolean noCache, String networkMode = "bridge") {
         TarArchive tarArchive = new TarArchive("${dockerFile.parent}/Dockerfile.tar")
         tarArchive.addFile(dockerFile)
         tarArchive.close()
@@ -330,6 +330,7 @@ class DockerClient {
                  "t"         : "$image:$tag",
                  "q"         : "$quiet",
                  "rm"        : "$removeTempContainers",
+                 "networkmode": "$networkMode",
                  "nocache"   : "$noCache"],
                 ContentType.JSON,
                 null,
@@ -340,7 +341,7 @@ class DockerClient {
         )
     }
 
-    def build(DockerFileBuilder dfb, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false, boolean noCache) {
+    def build(DockerFileBuilder dfb, String image, String tag = "latest", boolean quiet = false, boolean removeTempContainers = false, boolean noCache, String networkMode = "bridge") {
         TarArchive tarArchive = new TarArchive("${dfb.folder}/Dockerfile.tar")
         for (File file : dfb.folder.listFiles()) {
             if (file.name != "Dockerfile.tar") {
@@ -361,6 +362,7 @@ class DockerClient {
                  "t"         : "$image:$tag",
                  "q"         : "$quiet",
                  "rm"        : "$removeTempContainers",
+                 "networkmode": "$networkMode",
                  "nocache"   : "$noCache"],
                 ContentType.TEXT,
                 null,
@@ -396,9 +398,9 @@ class DockerClient {
      * @throws ClassCastException If dfb is not File or DockerFileBuilder ClassCastException will be thrown.
      */
     def build(
-            def dfb, DockerImage dockerImage, boolean removeTempContainers = false, boolean noCache = false) throws ClassCastException {
+            def dfb, DockerImage dockerImage, boolean removeTempContainers = false, boolean noCache = false, String networkMode = "bridge") throws ClassCastException {
         if (dfb instanceof DockerFileBuilder || dfb instanceof File) {
-            build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers, noCache)
+            build(dfb, dockerImage.getFullImageName(false), dockerImage.tag, false, removeTempContainers, noCache, networkMode)
             return dockerImage
         } else {
             throw new ClassCastException("dfb object must be File or DockerFileBuilder")
