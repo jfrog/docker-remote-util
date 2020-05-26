@@ -107,6 +107,21 @@ class DockerClient {
         return imagesToReturn
     }
 
+    /**
+     * Get images form org.jfrog.qa.docker server.
+     * @return List of Docker networks currently configured locally
+     */
+    List<DockerNetwork> getAllNetworks() {
+        def networks = get("/networks", ContentType.JSON)
+
+        List<DockerNetwork> result = []
+        for (Object network : networks) {
+            result.add(new DockerNetwork(network.Id, network.Name))
+        }
+
+        return result
+    }
+
     void addImageToImagesMap(DockerImage dockerImage) {
         def imageId = dockerImage.imageId == null ? dockerImage.inspect().Id : dockerImage.imageId
         if (!this.images.containsKey(imageId)) this.images.put(imageId, [])
