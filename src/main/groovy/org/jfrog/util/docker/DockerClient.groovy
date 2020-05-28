@@ -73,7 +73,7 @@ class DockerClient {
     }
 
     /**
-     * Get images form org.jfrog.qa.docker server.
+     * Get images from org.jfrog.qa.docker server.
      * @param isAll - if true, returns entire list of images, false, only current process
      * @return Map of all images, Image id as key, each key contain similar images.
      */
@@ -108,7 +108,7 @@ class DockerClient {
     }
 
     /**
-     * Get images form org.jfrog.qa.docker server.
+     * Retrieve the list of all currently configured Docker networks on the local host
      * @return List of Docker networks currently configured locally
      */
     List<DockerNetwork> getAllNetworks() {
