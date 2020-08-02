@@ -238,6 +238,22 @@ class DockerContainer {
         return this
     }
 
+    DockerContainer doRestart(int waitBeforeStopInSecs = 0) {
+        def query = null
+        if (waitBeforeStopInSecs > 0) {
+            query = [t: waitBeforeStopInSecs]
+        }
+        dockerClient.post(
+                "/containers/${id ? id : name}/restart",
+                query,
+                ContentType.JSON,
+                null,
+                ContentType.JSON
+        )
+
+        return this
+    }
+
     /**
      * Pause all container processes.<br>
      */
