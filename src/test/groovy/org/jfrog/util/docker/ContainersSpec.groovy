@@ -90,6 +90,19 @@ class ContainersSpec extends Specification {
         externalPort != -1
     }
 
+    def "Restart Container"(){
+        when:
+        dockerContainer.doStart()
+        then:
+        dockerContainer.inspect().State.Running == true
+
+        when:
+        String startedAt = dockerContainer.inspect().State.StartedAt
+        dockerContainer.doRestart()
+        then:
+        dockerContainer.inspect().State.StartedAt != startedAt
+    }
+
     def "Check if container exists"() {
         when:
         def exists = dockerContainer.isExists()
