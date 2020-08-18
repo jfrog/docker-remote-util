@@ -321,6 +321,11 @@ class DockerClient {
                     if (body) {
                         System.err.println "ERROR: ${body.text}"
                     }
+
+                    def bodyJson = resp?.entity?.content?.getText()
+                    if (bodyJson) {
+                        System.err.println "ERROR: $bodyJson"
+                    }
                     throw new HttpResponseException(resp)
                 }
             }

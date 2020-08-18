@@ -1,5 +1,6 @@
 package org.jfrog.util.docker
 
+import groovyx.net.http.HttpResponseException
 import org.jfrog.util.docker.constants.ContainerStatus
 import org.jfrog.util.docker.filters.ContainerFilter
 import spock.lang.Shared
@@ -67,6 +68,14 @@ class ContainersSpec extends Specification {
         dockerContainer.doCreate()
         then:
         dockerContainer.inspect()
+    }
+
+    def "Create a duplicate container"() {
+        when:
+        dockerContainer.doCreate()
+
+        then:
+        thrown(HttpResponseException)
     }
 
     def "Start container with timeout"() {
