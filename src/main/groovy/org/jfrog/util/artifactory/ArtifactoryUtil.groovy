@@ -59,12 +59,10 @@ class ArtifactoryUtil {
 
         assertOnFailure(artifactoryResponse)
 
-        return Optional.ofNullable(artifactoryResponse)
-                .map({response -> response.parseBody(Map.class)})
-                .map({body -> body.results})
-                .map({results -> results[0]})
-                .map({result -> result.name})
+        def result = Optional.ofNullable(artifactoryResponse)
+                .map({response -> response.parseBody(Map.class).results[0]})
                 .orElseThrow({-> new TagNotFoundException("Docker tag was not found")})
+        return result.name
     }
 
     static String getArtifactoryContextUrl() {
