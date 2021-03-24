@@ -6,6 +6,7 @@ import org.jfrog.artifactory.client.ArtifactoryClientBuilder
 import org.jfrog.artifactory.client.ArtifactoryRequest
 import org.jfrog.artifactory.client.ArtifactoryResponse
 import org.jfrog.artifactory.client.impl.ArtifactoryRequestImpl
+import org.jfrog.util.docker.exceptions.TagNotFoundException
 
 class ArtifactoryUtil {
 
@@ -58,9 +59,12 @@ class ArtifactoryUtil {
 
         assertOnFailure(artifactoryResponse)
 
-        List results = artifactoryResponse.parseBody(Map.class).results
-
-        return results[0].name
+        return Optional.ofNullable(artifactoryResponse)
+                .map({response -> response.parseBody(Map.class)})
+                .map({body -> body.results})
+                .map({results -> results[0]})
+                .map({result -> result.name})
+                .orElseThrow({-> new TagNotFoundException("Docker tag was not found")})
     }
 
     static String getArtifactoryContextUrl() {
