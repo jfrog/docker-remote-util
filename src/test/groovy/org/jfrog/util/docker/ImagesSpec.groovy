@@ -143,7 +143,7 @@ class ImagesSpec extends Specification {
         DockerFileBuilder dfb = new DockerFileBuilder(new File(this.getClass().getResource("").path))
 
         when:
-        dfb.from("centos", "6.6").
+        dfb.from("centos", "7").
                 run("yum install -y wget && yum install -y rsync").
                 copy(this.getClass().getResource("b.txt").path, "/var/opt/jfrog/artifactory/etc/artifactory.system.properties").
                 copy(this.getClass().getResource("a/a.txt").path, "/tmp/").
@@ -170,7 +170,7 @@ class ImagesSpec extends Specification {
         DockerFileBuilder dfb = new DockerFileBuilder(new File(this.getClass().getResource("").path))
 
         when:
-        dfb.from("$dockerPrivateRegistry/centos", "6.6").
+        dfb.from("$dockerPrivateRegistry/centos", "7").
                 run("yum install -y wget && yum install -y rsync").
                 copy(this.getClass().getResource("b.txt").path, "/var/opt/jfrog/artifactory/etc/artifactory.system.properties").
                 copy(this.getClass().getResource("a/a.txt").path, "/tmp/").
@@ -197,7 +197,7 @@ class ImagesSpec extends Specification {
         DockerFileBuilder dfb = new DockerFileBuilder(new File(this.getClass().getResource("").path))
 
         when:
-        dfb.from("centos", "6.6").
+        dfb.from("centos", "7").
                 run("yum install -y wget && yum install -y rsync").
                 copy(this.getClass().getResource("b.txt").path, "/var/opt/jfrog/artifactory/etc/artifactory.system.properties").
                 copy(this.getClass().getResource("a/a.txt").path, "/tmp/").
@@ -223,7 +223,7 @@ class ImagesSpec extends Specification {
         DockerFileBuilder dfb = new DockerFileBuilder(new File(this.getClass().getResource("").path))
 
         when:
-        dfb.from("centos", "6.6").
+        dfb.from("centos", "7").
                 run("yum install -y wget && yum install -y rsync").
                 copy(this.getClass().getResource("b.txt").path, "/var/opt/jfrog/artifactory/etc/artifactory.system.properties").
                 copy(this.getClass().getResource("a/a.txt").path, "/tmp/").
