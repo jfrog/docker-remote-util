@@ -1,16 +1,20 @@
 buildscript {
     repositories {
-        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.31.6"
     }
 }
 
-apply plugin: "com.jfrog.artifactory"
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
+apply plugin: 'java-library'
+apply from: 'gradle/repo.gradle'
+apply plugin: "com.jfrog.artifactory"
 
 version = releaseVersion
 
@@ -19,21 +23,19 @@ def dockerPrivateRegistry = project.hasProperty("docker_private_registry") ? doc
 def dockerPrivateRegistryUsername = project.hasProperty("docker_private_registry_username") ? docker_private_registry_username : System.getenv("docker_private_registry_username")
 def dockerPrivateRegistryPassword = project.hasProperty("docker_private_registry_password") ? docker_private_registry_password : System.getenv("docker_private_registry_password")
 
-
-
 repositories {
-    jcenter()
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
 }
 
 dependencies {
-    compile(group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.3')
-    compile(group: 'org.jfrog.artifactory.client', name: 'artifactory-java-client-services', version: '2.6.0')
-    compile(group: 'com.google.code.gson', name: 'gson', version: '2.3.1')
-    compile(group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7')
-    compile(group: 'org.apache.commons', name: 'commons-compress', version: '1.9')
-    compile(group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0')
-
-    testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4')
+    implementation(group: 'com.google.code.gson', name: 'gson', version: '2.8.9')
+    implementation(group: 'org.apache.commons', name: 'commons-compress', version: '1.21')
+    implementation(group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0')
+    implementation(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.31.5')
 }
 
 test {
@@ -47,18 +49,21 @@ test {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
-task groovydocJar(type: Jar, dependsOn: groovydoc) {
-    classifier = 'groovydoc'
+tasks.register('groovydocJar', Jar) {
+    dependsOn groovydoc
+    archiveClassifier = 'groovydoc'
     from groovydoc.destinationDir
 }
 
