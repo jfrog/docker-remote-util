@@ -21,6 +21,7 @@ import groovyx.net.http.*
 import org.apache.http.HttpResponse
 import org.jfrog.util.docker.configurations.DockerFileBuilder
 import org.jfrog.util.docker.filters.ContainerFilter
+import org.jfrog.util.docker.utils.RESTClientExt
 import org.jfrog.util.docker.utils.TarArchive
 
 /**
@@ -29,7 +30,7 @@ import org.jfrog.util.docker.utils.TarArchive
 class DockerClient {
 
     def url
-    RESTClient client
+    RESTClientExt client
     Map<String, Set<DockerImage>> images
     boolean isKeepAlive = true
 
@@ -44,7 +45,7 @@ class DockerClient {
             throw new NullPointerException("docker url cannot be null")
         }
         this.url = url
-        client = new RESTClient(this.url)
+        client = new RESTClientExt(this.url)
         apiVersion = version().ApiVersion
         images = [:]
 
