@@ -1,6 +1,7 @@
 package org.jfrog.util.docker.utils
 
-import groovyx.net.http.HttpResponseDecorator;
+import groovyx.net.http.HttpResponseDecorator
+import groovyx.net.http.HttpResponseException;
 import groovyx.net.http.RESTClient;
 import groovyx.net.http.ResponseParseException;
 import org.codehaus.groovy.runtime.IOGroovyMethods;
@@ -46,5 +47,11 @@ public class RESTClientExt extends RESTClient {
         {
             throw new ResponseParseException(resp, ex);
         }
+    }
+
+    @Override
+    protected void defaultFailureHandler( HttpResponseDecorator resp, Object data ) throws HttpResponseException {
+        defaultSuccessHandler(resp, data)
+        throw new HttpResponseException( resp );
     }
 }
