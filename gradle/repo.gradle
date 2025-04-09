@@ -4,13 +4,16 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:3.0.10'
-    implementation("org.spockframework:spock-core:2.3-groovy-3.0") { exclude group: "org.codehaus.groovy" }
-    implementation('org.jfrog.artifactory.client:artifactory-java-client-services:2.7.0')
+    implementation(group: 'org.jfrog.artifactory.client', name: 'artifactory-java-client-services', version: '2.19.1')
+    implementation(group: 'org.apache.commons', name: 'commons-compress', version: '1.9')
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents:httpcore:4.4.6")
+    implementation("org.codehaus.groovy.modules.http-builder:http-builder:0.7.1")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation(group: 'org.apache.groovy', name: 'groovy-all', version: '4.0.24')
+    testImplementation(group: 'org.spockframework', name: 'spock-core', version: '2.4-M4-groovy-4.0')
     implementation 'org.apache.commons:commons-io:1.3.2'
-    implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     implementation group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0'
-    implementation 'com.atlassian.jira:jira-rest-java-client-core:5.1.6'
     implementation(group: 'com.google.code.gson', name: 'gson', version: '2.8.9')
     implementation(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.31.5')
 }
