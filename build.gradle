@@ -31,13 +31,6 @@ repositories {
     }
 }
 
-dependencies {
-    implementation(group: 'com.google.code.gson', name: 'gson', version: '2.8.9')
-    implementation(group: 'org.apache.commons', name: 'commons-compress', version: '1.21')
-    implementation(group: 'com.github.zafarkhaja', name: 'java-semver', version: '0.9.0')
-    implementation(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.31.5')
-}
-
 test {
     systemProperty "docker_url", dockerUrl
     systemProperty "docker_private_registry", dockerPrivateRegistry
@@ -56,13 +49,11 @@ tasks.register('sourcesJar', Jar) {
 }
 
 tasks.register('javadocJar', Jar) {
-    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 tasks.register('groovydocJar', Jar) {
-    dependsOn groovydoc
     archiveClassifier = 'groovydoc'
     from groovydoc.destinationDir
 }
@@ -77,10 +68,8 @@ publishing {
             from components.java
 
             artifact sourcesJar {
-                classifier "sources"
             }
             artifact groovydocJar {
-                classifier "groovydoc"
             }
         }
     }
@@ -90,12 +79,10 @@ artifacts {
     archives sourcesJar,
             groovydocJar,
             jar
-
 }
 
 artifactory {
     publish {
-
         defaults {
             publications('mavenJava')
         }

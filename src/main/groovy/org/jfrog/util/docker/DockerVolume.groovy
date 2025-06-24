@@ -17,8 +17,8 @@
 package org.jfrog.util.docker
 
 import groovy.json.JsonOutput
-import groovyx.net.http.ContentType
-import groovyx.net.http.HttpResponseException
+import org.apache.http.client.HttpResponseException
+import groovyx.net.http.*
 
 /**
  * Created by matank on 4/27/15.
