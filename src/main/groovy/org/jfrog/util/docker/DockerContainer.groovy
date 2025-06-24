@@ -17,7 +17,7 @@
 package org.jfrog.util.docker
 
 import org.apache.http.client.HttpResponseException
-import org.apache.http.entity.ContentType
+import groovyx.net.http.*
 import groovyx.net.http.HttpResponseDecorator
 import org.jfrog.util.docker.configurations.CreateConfig
 import org.jfrog.util.docker.configurations.StartConfig

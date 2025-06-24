@@ -17,7 +17,7 @@
 package org.jfrog.util.docker
 
 import groovy.json.JsonBuilder
-import org.apache.http.entity.ContentType
+import groovyx.net.http.*
 import org.apache.commons.lang.StringUtils
 import org.jfrog.util.docker.inspect.State
 
